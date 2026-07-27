@@ -28,30 +28,29 @@ body{background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans",syste
 .masthead{padding:30px 0 0}
 .masthead h1{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 100,"wght" 500;font-size:clamp(32px,7vw,54px);line-height:.98;margin:0;letter-spacing:-.02em}
 .masthead h1 em{font-style:italic;font-variation-settings:"opsz" 100,"wght" 300}
-.rule{height:1px;background:var(--ink);margin:18px 0 0;opacity:.75}
+.rule{height:1px;background:var(--ink);margin:20px 0 0;opacity:.75}
 
-/* état de synchro : une simple ligne sous le filet */
-.sync{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:7px;
-      font-size:11.5px;color:var(--soft);font-family:"IBM Plex Mono",monospace;letter-spacing:.02em}
-.sync .dot{width:6px;height:6px;border-radius:50%;background:var(--line);flex:0 0 auto}
+.sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--soft);padding:11px 14px;margin-top:18px;font-size:13px}
+.sync.ok{border-left-color:var(--sage)}
+.sync.pending{border-left-color:var(--brass)}
+.sync .dot{width:8px;height:8px;border-radius:50%;background:var(--soft);flex:0 0 auto}
 .sync.ok .dot{background:var(--sage)}
 .sync.pending .dot{background:var(--brass)}
-.sync .lnk{background:none;border:0;padding:2px 4px;margin:0;cursor:pointer;color:var(--soft);
-           font:inherit;text-decoration:underline;text-underline-offset:2px}
-.sync .lnk:hover{color:var(--garnet)}
-.sync .lnk:disabled{opacity:.5;cursor:default;text-decoration:none}
+.sync .txt{flex:1 1 190px;min-width:0}
+.sync .txt b{font-weight:600}
+.sync .meta{display:block;color:var(--soft);font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis}
 
-.tabs{display:flex;border-bottom:1px solid var(--line);margin-top:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin-top:22px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;padding:12px 15px 10px;margin-bottom:-1px;cursor:pointer;color:var(--soft);font-family:inherit;font-size:13px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
 .tab:hover{color:var(--ink)}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--garnet);font-weight:600}
 .tab .count{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.55;margin-left:6px}
 
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 14px}
 input[type=text],input[type=number],input[type=date],select,textarea{font-family:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:9px 10px;min-height:42px}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--garnet);outline-offset:2px}
-#q,#m-q{flex:1 1 190px;min-width:130px}
+#q{flex:1 1 200px;min-width:140px}
 .btn{font-family:inherit;font-size:14px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:9px 14px;cursor:pointer;min-height:42px}
 .btn:hover{border-color:var(--ink)}
 .btn:disabled{opacity:.45;cursor:default}
@@ -60,27 +59,11 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .btn-quiet{background:none;border-color:transparent;color:var(--soft)}
 .btn-quiet:hover{color:var(--garnet)}
 .btn-sm{min-height:34px;padding:5px 10px;font-size:13px}
-.badge{display:inline-block;margin-left:6px;min-width:17px;padding:0 5px;border-radius:9px;background:var(--garnet);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:17px;text-align:center;vertical-align:1px}
 [hidden]{display:none!important}
 
-/* boutons de sélection */
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chips button{font-family:inherit;font-size:13px;background:var(--card);color:var(--soft);
-  border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;min-height:38px;white-space:nowrap}
-.chips button:hover{border-color:var(--ink);color:var(--ink)}
-.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground);font-weight:500}
-.chips button:disabled{opacity:.4;cursor:default}
-.chips button:disabled:hover{border-color:var(--line);color:var(--soft)}
-.filters{display:grid;gap:11px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-.fg{display:flex;gap:11px;align-items:flex-start;flex-wrap:wrap}
-.fl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
-    color:var(--soft);padding-top:12px;flex:0 0 74px}
-
-/* liste */
-.list{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.list{border-top:1px solid var(--line)}
 .row,.head{display:grid;grid-template-columns:1fr 178px 96px 62px;gap:14px;align-items:center}
 .row{padding:13px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;width:100%;text-align:left;font-family:inherit;font-size:inherit;color:inherit}
-.row:last-child{border-bottom:0}
 .row:hover{background:rgba(110,32,56,.05)}
 .row .name{font-weight:600;letter-spacing:-.01em}
 .row .place{font-size:12.5px;color:var(--soft)}
@@ -108,27 +91,26 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .panel h2{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 100,"wght" 500;font-size:21px;margin:0 0 3px;letter-spacing:-.01em}
 .panel p.sub{margin:0 0 15px;font-size:13px;color:var(--soft);max-width:64ch}
 .plot{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line)}
-.top{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.top{border-top:1px solid var(--line)}
 .top div{display:flex;justify-content:space-between;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:14px}
-.top div:last-child{border-bottom:0}
 .top .r{font-family:"IBM Plex Mono",monospace;color:var(--soft);font-size:12px;width:22px;flex:0 0 22px}
 .top .t{flex:1;min-width:0}
 .top .v{font-family:"IBM Plex Mono",monospace}
 
 .podiums{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
-.pod{background:var(--card);border:1px solid var(--line);padding:14px 15px 12px}
+.pod{background:var(--card);border:1px solid var(--line);padding:14px 15px 10px}
 .pod h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);margin:0 0 4px}
 .pod .moy{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 60,"wght" 500;font-size:20px;letter-spacing:-.02em;margin-bottom:8px}
 .pod .moy small{font-size:12px;color:var(--soft);font-family:"IBM Plex Mono",monospace;font-variation-settings:normal;letter-spacing:0}
-.pod ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.pod ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .pod li{display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .pod li:last-child{border-bottom:0}
 .pod .rk{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);flex:0 0 14px}
 .pod .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pod .vl{font-family:"IBM Plex Mono",monospace;font-size:12.5px;flex:0 0 auto}
-.pod .none{padding:8px 0;font-size:12.5px;color:var(--soft);border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.pod .none{padding:8px 0;font-size:12.5px;color:var(--soft)}
 
-#map{height:min(70vh,600px);border:1px solid var(--line);background:var(--card)}
+#map{height:min(72vh,620px);border:1px solid var(--line);background:var(--card)}
 .pin{background:none;border:0}
 .pin .b{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--ink);border-radius:14px;padding:2px 9px 2px 3px;white-space:nowrap;font-family:"IBM Plex Sans",sans-serif;font-size:12px;line-height:1.5;box-shadow:0 1px 3px rgba(25,29,35,.22)}
 .pin .n{display:flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;background:var(--garnet);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;flex:0 0 auto}
@@ -136,37 +118,31 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .pin.todo .n{background:none;border:1px dashed var(--soft);color:var(--soft)}
 .pin.lo .n{background:#B07E8D}
 .pin.mid .n{background:#8E3A52}
-.pin.moi .b{border-color:var(--sage);color:var(--sage)}
-.pin.moi .n{background:var(--sage)}
 .leaflet-container{font-family:"IBM Plex Sans",sans-serif}
-.maphint{font-size:12.5px;color:var(--soft);margin-top:9px;min-height:19px}
+.maphint{font-size:12.5px;color:var(--soft);margin-top:9px}
 
-.cfglist{border-top:1px solid var(--line);border-bottom:2px solid var(--ink);margin-bottom:12px}
+.cfglist{border-top:1px solid var(--line);margin-bottom:12px}
 .cfgrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid var(--line)}
-.cfgrow:last-child{border-bottom:0}
 .cfgrow input{flex:1;min-width:0}
 .cfgrow .used{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);flex:0 0 auto;min-width:16px;text-align:right}
 
-dialog{border:1px solid var(--ink);border-radius:var(--r);padding:0;background:var(--card);color:var(--ink);width:min(640px,94vw);max-height:90vh}
+dialog{border:1px solid var(--ink);border-radius:var(--r);padding:0;background:var(--card);color:var(--ink);width:min(620px,94vw);max-height:90vh}
 dialog::backdrop{background:rgba(25,29,35,.45)}
 .sheet{padding:22px 24px 24px}
 .sheet h3{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 100,"wght" 500;font-size:23px;margin:0 0 16px;letter-spacing:-.015em}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-.field{display:flex;flex-direction:column;gap:6px;position:relative}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px;position:relative}
 .field.full{grid-column:1/-1}
-.field label,.field .lbl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.field label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
 .field input,.field select,.field textarea{width:100%}
 .field .hint{font-size:11.5px;color:var(--soft)}
 textarea{resize:vertical;min-height:64px;line-height:1.45}
-.ac{position:absolute;top:100%;left:0;right:0;z-index:5;background:var(--card);border:1px solid var(--ink);max-height:240px;overflow:auto}
+.ac{position:absolute;top:100%;left:0;right:0;z-index:5;background:var(--card);border:1px solid var(--ink);max-height:210px;overflow:auto}
 .ac button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:9px 10px;cursor:pointer;font:inherit;font-size:13.5px}
 .ac button:hover{background:rgba(110,32,56,.07)}
 .ac small{display:block;color:var(--soft);font-size:11.5px}
-.ac .kind{float:right;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--brass);text-transform:uppercase;letter-spacing:.06em}
 .ac .st{padding:9px 10px;font-size:12.5px;color:var(--soft)}
-.crits-box{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
 .crit{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
-.crit:last-child{border-bottom:0}
 .crit label{font-size:13px}
 .stars{display:flex;gap:2px}
 .stars button{background:none;border:0;padding:4px;cursor:pointer;font-size:16px;color:var(--line);line-height:1}
@@ -185,11 +161,9 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
   .c-style{grid-area:style}
   .c-dist{grid-area:dist;text-align:right;align-self:center}
   .grid{grid-template-columns:1fr}
-  .fg{display:block}
-  .fl{padding:0 0 6px;display:block}
   dialog{width:100vw;max-width:100vw;max-height:100vh;height:100vh;border:0;border-radius:0}
   .sheet{padding:20px 18px calc(28px + env(safe-area-inset-bottom))}
-  #map{height:60vh}
+  #map{height:64vh}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -200,13 +174,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
   <header class="masthead">
     <h1>Carnet de <em>tables</em></h1>
     <div class="rule"></div>
-    <div class="sync" id="syncbox" role="status">
-      <span class="dot"></span>
-      <span id="sync-t">lecture seule</span>
-      <button class="lnk" id="sync-btn">connecter</button>
-      <button class="lnk" id="sync-out" hidden>déconnecter</button>
-    </div>
   </header>
+
+  <div class="sync" id="syncbox" role="status">
+    <span class="dot"></span>
+    <span class="txt"><b id="sync-t">Lecture seule</b><span class="meta" id="sync-m"></span></span>
+    <button class="btn btn-sm" id="sync-btn">Connecter</button>
+    <button class="btn btn-sm btn-quiet" id="sync-out" hidden>Déconnecter</button>
+  </div>
 
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" data-tab="faites" aria-selected="true">Tables <span class="count" id="c-faites"></span></button>
@@ -219,13 +194,10 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
   <section id="view-liste">
     <div class="toolbar">
       <input type="text" id="q" placeholder="Chercher…" aria-label="Recherche">
-      <button class="btn" id="togfiltres" aria-expanded="true">Filtres<span class="badge" id="nfiltres" hidden></span></button>
+      <select id="f-style" aria-label="Filtrer par style"><option value="">Tous styles</option></select>
+      <select id="f-dist" aria-label="Filtrer par distinction"><option value="">Toutes distinctions</option></select>
       <button class="btn btn-solid" id="add">+ Nouvelle table</button>
       <button class="btn btn-quiet" id="csv">CSV</button>
-    </div>
-    <div class="filters" id="filters">
-      <div class="fg"><span class="fl">Style</span><div class="chips" id="f-style" data-value=""></div></div>
-      <div class="fg"><span class="fl">Distinction</span><div class="chips" id="f-dist" data-value=""></div></div>
     </div>
     <div class="head">
       <button data-sort="nom">Table</button>
@@ -238,12 +210,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
 
   <section id="view-carte" hidden>
     <div class="toolbar">
-      <input type="text" id="m-q" placeholder="Aller à un lieu…" aria-label="Chercher un lieu sur la carte">
-      <button class="btn" id="m-go">Chercher</button>
-      <button class="btn" id="m-loc">Me localiser</button>
-    </div>
-    <div class="filters">
-      <div class="fg"><span class="fl">Afficher</span><div class="chips" id="m-filtre" data-value="tout"></div></div>
+      <select id="m-filtre" aria-label="Afficher">
+        <option value="tout">Toutes les tables</option>
+        <option value="faite">Tables faites</option>
+        <option value="afaire">À faire</option>
+      </select>
+      <span style="font-size:12.5px;color:var(--soft)">Touchez un repère pour ouvrir la fiche.</span>
     </div>
     <div id="map"></div>
     <p class="maphint" id="maphint"></p>
@@ -308,21 +280,23 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
         <label for="f-nom">Nom du restaurant</label>
         <input type="text" id="f-nom" autocomplete="off" required placeholder="Trois lettres suffisent pour chercher">
         <div class="ac" id="ac" hidden></div>
-        <span class="hint">Suggestions OpenStreetMap : restaurants, hôtels-restaurants, auberges, bars et cafés.</span>
+        <span class="hint">Les suggestions viennent de la base des restaurants OpenStreetMap.</span>
       </div>
       <div class="field"><label for="f-commune">Commune</label><input type="text" id="f-commune"></div>
       <div class="field"><label for="f-date">Date de la visite</label><input type="date" id="f-date"></div>
-      <div class="field full"><span class="lbl">Style</span><div class="chips" id="fr-style" data-value=""></div></div>
-      <div class="field full"><span class="lbl">Distinction</span><div class="chips" id="fr-distinction" data-value=""></div></div>
-      <div class="field full"><span class="lbl">Gamme de prix</span><div class="chips" id="fr-gamme" data-value=""></div></div>
+      <div class="field"><label for="fr-style">Style</label><select id="fr-style"></select></div>
+      <div class="field"><label for="fr-gamme">Gamme de prix</label><select id="fr-gamme"></select></div>
+      <div class="field"><label for="fr-distinction">Distinction</label><select id="fr-distinction"></select></div>
       <div class="field"><label for="f-format">Format</label>
         <select id="f-format"><option value="">—</option><option>Carte</option><option>Menu unique</option><option>Menu dégustation</option></select>
       </div>
       <div class="field"><label for="f-prix">Ticket par personne (€)</label><input type="number" id="f-prix" min="0" step="1"></div>
-      <div class="field full"><label for="f-note-in">Note globale sur 10</label><input type="number" id="f-note-in" min="0" max="10" step="1"></div>
-      <div class="field full"><span class="lbl">Critères</span><div class="crits-box" id="crits"></div></div>
+      <div class="field"><label for="f-note-in">Note globale sur 10</label><input type="number" id="f-note-in" min="0" max="10" step="1"></div>
+      <div class="field full"><label>Critères</label><div id="crits"></div></div>
       <div class="field full"><label for="f-com">Commentaire</label><textarea id="f-com" placeholder="Ce qui a marqué, en bien comme en mal."></textarea></div>
-      <div class="field full"><span class="lbl">Statut</span><div class="chips" id="f-statut" data-value="faite"></div></div>
+      <div class="field full"><label for="f-statut">Statut</label>
+        <select id="f-statut"><option value="faite">Table faite</option><option value="afaire">À faire</option></select>
+      </div>
     </div>
     <div class="actions">
       <button type="button" class="btn btn-quiet left" id="del" hidden>Supprimer</button>
@@ -349,11 +323,11 @@ let CFG = {
 };
 
 let STYLES = [
- "Classique bourgeois",
- "Terroir & régional",
  "Bistronomie",
+ "Cuisine d'auteur",
+ "Classique bourgeois",
  "Gastronomique contemporain",
- "Cuisine d'auteur"
+ "Terroir & régional"
 ];
 
 let RESTOS = [
@@ -363,15 +337,20 @@ let RESTOS = [
   "commune": "Kaysersberg",
   "la": 48.1394,
   "lo": 7.2647,
-  "style": "Cuisine d'auteur",
+  "style": "Gastronomique contemporain",
   "gamme": "€€€€",
   "distinction": "2 étoiles",
   "note": 10,
   "date": "",
-  "prix": null,
+  "prix": 300,
   "format": "Menu dégustation",
   "com": "",
-  "crit": {},
+  "crit": {
+   "cuisine": 5,
+   "cadre": 3,
+   "service": 5,
+   "qp": 3
+  },
   "statut": "faite"
  },
  {
@@ -380,19 +359,19 @@ let RESTOS = [
   "commune": "Wingen-sur-Moder",
   "la": 48.9185,
   "lo": 7.3647,
-  "style": "Cuisine d'auteur",
+  "style": "Gastronomique contemporain",
   "gamme": "€€€€",
   "distinction": "2 étoiles",
   "note": 10,
   "date": "",
-  "prix": null,
+  "prix": 300,
   "format": "Menu dégustation",
-  "com": "Cave hors norme, cadre Mario Botta.",
+  "com": "Cave hors norme",
   "crit": {
    "cuisine": 5,
-   "cadre": 5,
+   "cadre": 4,
    "service": 5,
-   "qp": 4
+   "qp": 3
   },
   "statut": "faite"
  },
@@ -407,14 +386,14 @@ let RESTOS = [
   "distinction": "—",
   "note": 9,
   "date": "",
-  "prix": null,
+  "prix": 100,
   "format": "Menu unique",
-  "com": "Douze couverts, végétal et fermentations.",
+  "com": "Douze couverts, végétal et fermentations. Super bon mais le prix ne fait qu'augmenter à chaque passage.",
   "crit": {
    "cuisine": 5,
-   "cadre": 4,
-   "service": 5,
-   "qp": 5
+   "cadre": 2,
+   "service": 3,
+   "qp": 4
   },
   "statut": "faite"
  },
@@ -431,8 +410,13 @@ let RESTOS = [
   "date": "",
   "prix": null,
   "format": "Carte",
-  "com": "Poulpe grillé en signature.",
-  "crit": {},
+  "com": "",
+  "crit": {
+   "cuisine": 4,
+   "cadre": 3,
+   "service": 3,
+   "qp": 5
+  },
   "statut": "faite"
  },
  {
@@ -444,12 +428,17 @@ let RESTOS = [
   "style": "Gastronomique contemporain",
   "gamme": "€€€",
   "distinction": "—",
-  "note": 8,
+  "note": 7,
   "date": "",
-  "prix": null,
-  "format": "",
+  "prix": 120,
+  "format": "Carte",
   "com": "Distinction à vérifier.",
-  "crit": {},
+  "crit": {
+   "cuisine": 4,
+   "cadre": 3,
+   "service": 4,
+   "qp": 4
+  },
   "statut": "faite"
  },
  {
@@ -458,15 +447,20 @@ let RESTOS = [
   "commune": "Haguenau",
   "la": 48.8107,
   "lo": 7.7917,
-  "style": "Bistronomie",
-  "gamme": "€€",
+  "style": "Classique bourgeois",
+  "gamme": "€€€",
   "distinction": "Bib Gourmand",
   "note": 8,
   "date": "",
-  "prix": null,
+  "prix": 90,
   "format": "Carte",
   "com": "Menu Retour du Marché très bien placé.",
-  "crit": {},
+  "crit": {
+   "cuisine": 4,
+   "cadre": 2,
+   "service": 3,
+   "qp": 4
+  },
   "statut": "faite"
  },
  {
@@ -475,15 +469,20 @@ let RESTOS = [
   "commune": "Stutzheim-Offenheim",
   "la": 48.6289,
   "lo": 7.6403,
-  "style": "Bistronomie",
+  "style": "Terroir & régional",
   "gamme": "€€",
   "distinction": "—",
-  "note": 7,
+  "note": 5,
   "date": "",
-  "prix": null,
-  "format": "",
+  "prix": 60,
+  "format": "Carte",
   "com": "",
-  "crit": {},
+  "crit": {
+   "cuisine": 3,
+   "cadre": 2,
+   "service": 2,
+   "qp": 4
+  },
   "statut": "faite"
  },
  {
@@ -497,10 +496,15 @@ let RESTOS = [
   "distinction": "1 étoile",
   "note": 7,
   "date": "",
-  "prix": null,
+  "prix": 150,
   "format": "Menu dégustation",
-  "com": "",
-  "crit": {},
+  "com": "Tout était bien réalisé mais sans magie. Dommage.",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 4,
+   "service": 4,
+   "qp": 3
+  },
   "statut": "faite"
  },
  {
@@ -512,12 +516,17 @@ let RESTOS = [
   "style": "Terroir & régional",
   "gamme": "€€€",
   "distinction": "—",
-  "note": 6,
+  "note": 5,
   "date": "",
-  "prix": null,
+  "prix": 80,
   "format": "Carte",
-  "com": "Généreux, peu de signature.",
-  "crit": {},
+  "com": "Sympa, peu de signature.",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 2,
+   "service": 3,
+   "qp": 3
+  },
   "statut": "faite"
  },
  {
@@ -526,15 +535,20 @@ let RESTOS = [
   "commune": "Laubach",
   "la": 48.88,
   "lo": 7.7224,
-  "style": "Classique bourgeois",
+  "style": "Gastronomique contemporain",
   "gamme": "€€€€",
   "distinction": "2 étoiles",
-  "note": 5,
+  "note": 3,
   "date": "",
-  "prix": null,
+  "prix": 150,
   "format": "Menu dégustation",
-  "com": "Beau classicisme, art des jus.",
-  "crit": {},
+  "com": "La purée est incroyable et tout le reste est une catastrophe.",
+  "crit": {
+   "cuisine": 2,
+   "cadre": 1,
+   "service": 1,
+   "qp": 2
+  },
   "statut": "faite"
  },
  {
@@ -548,10 +562,15 @@ let RESTOS = [
   "distinction": "—",
   "note": 4,
   "date": "",
-  "prix": null,
+  "prix": 100,
   "format": "Carte",
-  "com": "",
-  "crit": {},
+  "com": "Classique mais finalement trop cher pour ce que c'est.",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 3,
+   "service": 2,
+   "qp": 2
+  },
   "statut": "faite"
  },
  {
@@ -560,15 +579,20 @@ let RESTOS = [
   "commune": "Marmoutier",
   "la": 48.6905,
   "lo": 7.3809,
-  "style": "Terroir & régional",
+  "style": "Bistronomie",
   "gamme": "€€",
   "distinction": "—",
   "note": 4,
   "date": "",
-  "prix": null,
-  "format": "",
+  "prix": 60,
+  "format": "Carte",
   "com": "",
-  "crit": {},
+  "crit": {
+   "cuisine": 2,
+   "cadre": 2,
+   "service": 3,
+   "qp": 3
+  },
   "statut": "faite"
  },
  {
@@ -577,12 +601,12 @@ let RESTOS = [
   "commune": "Marlenheim",
   "la": 48.621,
   "lo": 7.4936,
-  "style": "Classique bourgeois",
-  "gamme": "€€€",
+  "style": "Gastronomique contemporain",
+  "gamme": "€€€€",
   "distinction": "1 étoile",
   "note": 3,
   "date": "",
-  "prix": null,
+  "prix": 120,
   "format": "Carte",
   "com": "Noté 4 à la première visite, 3 à la seconde.",
   "crit": {
@@ -619,13 +643,18 @@ let RESTOS = [
   "style": "Cuisine d'auteur",
   "gamme": "€€€",
   "distinction": "1 étoile",
-  "note": null,
+  "note": 5,
   "date": "",
-  "prix": null,
-  "format": "Menu unique",
-  "com": "Seize couverts, le soir du lundi au vendredi.",
-  "crit": {},
-  "statut": "afaire"
+  "prix": 100,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 3,
+   "service": 3,
+   "qp": 2
+  },
+  "statut": "faite"
  },
  {
   "id": 16,
@@ -694,6 +723,260 @@ let RESTOS = [
   "com": "Réservé.",
   "crit": {},
   "statut": "afaire"
+ },
+ {
+  "id": 20,
+  "la": 48.90527,
+  "lo": 7.6538,
+  "nom": "Les jardins du moulin",
+  "commune": "Gundershoffen",
+  "style": "Bistronomie",
+  "gamme": "€€€",
+  "distinction": "—",
+  "note": 7,
+  "date": "2026-07-27",
+  "prix": 110,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 5,
+   "service": 3,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 21,
+  "la": 48.90087,
+  "lo": 7.74307,
+  "nom": "La Source des Sens",
+  "commune": "Morsbronn-les-Bains",
+  "style": "Bistronomie",
+  "gamme": "€€€",
+  "distinction": "—",
+  "note": 4,
+  "date": "",
+  "prix": 110,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 3,
+   "service": 3,
+   "qp": 2
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 22,
+  "la": 48.74136,
+  "lo": 7.36175,
+  "nom": "Morillon",
+  "commune": "Saverne",
+  "style": "Bistronomie",
+  "gamme": "€€€",
+  "distinction": "—",
+  "note": null,
+  "date": "2026-07-27",
+  "prix": null,
+  "format": "",
+  "com": "",
+  "crit": {},
+  "statut": "afaire"
+ },
+ {
+  "id": 23,
+  "la": 48.80576,
+  "lo": 7.40169,
+  "nom": "Le café du havre",
+  "commune": "Dossenheim-sur-Zinsel",
+  "style": "Bistronomie",
+  "gamme": "€€",
+  "distinction": "—",
+  "note": 6,
+  "date": "2026-07-27",
+  "prix": 65,
+  "format": "Menu unique",
+  "com": "Service trop lent le dimanche",
+  "crit": {
+   "cuisine": 4,
+   "cadre": 2,
+   "service": 2,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 24,
+  "la": 48.54188,
+  "lo": 7.72363,
+  "nom": "Miro",
+  "commune": "Ostwald",
+  "style": "Bistronomie",
+  "gamme": "€€€",
+  "distinction": "—",
+  "note": 6,
+  "date": "2026-07-27",
+  "prix": 80,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 4,
+   "cadre": 4,
+   "service": 3,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 25,
+  "la": 48.82363,
+  "lo": 7.73797,
+  "nom": "Aux Berges de la Moder",
+  "commune": "Schweighouse-sur-Moder",
+  "style": "Bistronomie",
+  "gamme": "€€",
+  "distinction": "—",
+  "note": 5,
+  "date": "2026-07-27",
+  "prix": 70,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 3,
+   "service": 3,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 26,
+  "la": 48.76988,
+  "lo": 7.85546,
+  "nom": "Au Vieux Moulin",
+  "commune": "Bischwiller",
+  "style": "Terroir & régional",
+  "gamme": "€",
+  "distinction": "—",
+  "note": 5,
+  "date": "2026-07-27",
+  "prix": 35,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 3,
+   "service": 3,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 27,
+  "la": 48.7826,
+  "lo": 7.86714,
+  "nom": "l'Eden",
+  "commune": "Oberhoffen-Sur-Moder",
+  "style": "Terroir & régional",
+  "gamme": "€€",
+  "distinction": "—",
+  "note": 6,
+  "date": "2026-07-27",
+  "prix": 35,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 4,
+   "cadre": 2,
+   "service": 3,
+   "qp": 4
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 28,
+  "la": 48.79275,
+  "lo": 7.70156,
+  "nom": "Les pots cassés",
+  "commune": "Wintershouse",
+  "style": "Terroir & régional",
+  "gamme": "€",
+  "distinction": "—",
+  "note": 4,
+  "date": "2026-07-27",
+  "prix": 30,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 2,
+   "cadre": 2,
+   "service": 3,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 29,
+  "la": 48.74199,
+  "lo": 7.3626,
+  "nom": "El ceviche",
+  "commune": "Saverne",
+  "style": "Bistronomie",
+  "gamme": "€€€",
+  "distinction": "—",
+  "note": 6,
+  "date": "",
+  "prix": 60,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 3,
+   "cadre": 4,
+   "service": 2,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 30,
+  "la": 48.7583,
+  "lo": 7.57011,
+  "nom": "Le storignescht",
+  "commune": "Hochfelden",
+  "style": "Bistronomie",
+  "gamme": "€€€",
+  "distinction": "—",
+  "note": 6,
+  "date": "",
+  "prix": 70,
+  "format": "Carte",
+  "com": "",
+  "crit": {
+   "cuisine": 4,
+   "cadre": 2,
+   "service": 3,
+   "qp": 3
+  },
+  "statut": "faite"
+ },
+ {
+  "id": 31,
+  "la": 48.74194,
+  "lo": 7.39772,
+  "nom": "Restaurant Käsbur",
+  "commune": "Monswiller",
+  "style": "Bistronomie",
+  "gamme": "€€€",
+  "distinction": "—",
+  "note": null,
+  "date": "",
+  "prix": null,
+  "format": "",
+  "com": "",
+  "crit": {},
+  "statut": "afaire"
  }
 ];
 /* __DATA_FIN__ */
@@ -715,52 +998,33 @@ function setToken(t){
 const canEdit = () => !!TOKEN;
 
 let tab="faites", sortKey="note", sortDir=-1, editing=null, dirty=0, lastSync=null,
-    syncing=false, map=null, layer=null, moiMarker=null, centre={la:48.72,lo:7.62};
+    syncing=false, map=null, layer=null;
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 const avg = a => a.length ? a.reduce((s,x)=>s+x,0)/a.length : null;
 
-/* ---------- boutons de sélection ---------- */
-function chips(host, options, opts){
-  opts = opts || {};
-  const el = $(host);
-  if(opts.value!==undefined) el.dataset.value = opts.value;
-  const cur = el.dataset.value;
-  el.innerHTML = options.map(o=>{
-    const v = typeof o==="string" ? o : o.v;
-    const l = typeof o==="string" ? o : o.l;
-    return `<button type="button" data-v="${esc(v)}" aria-pressed="${String(v===cur)}"${opts.disabled?" disabled":""}>${esc(l)}</button>`;
-  }).join("");
-}
-const chipValue = host => $(host).dataset.value;
-function onChips(host, cb){
-  $(host).addEventListener("click", e=>{
-    const b=e.target.closest("button[data-v]"); if(!b || b.disabled) return;
-    $(host).dataset.value = b.dataset.v;
-    [...$(host).children].forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
-    cb($(host).dataset.v);
-  });
-}
-
-/* ---------- état de synchro ---------- */
+/* ---------- synchro ---------- */
 function renderSync(){
-  const t=$("#sync-t"), b=$("#sync-btn");
+  const t=$("#sync-t"), m=$("#sync-m"), b=$("#sync-btn");
   $("#syncbox").className = "sync " + (!canEdit() ? "" : dirty ? "pending" : "ok");
   $("#tab-reglages").hidden = !canEdit();
   $("#add").hidden = !canEdit();
   $("#sync-out").hidden = !canEdit();
-  if(syncing){ t.textContent="publication…"; b.disabled=true; b.textContent="publier"; return; }
+  if(syncing){ t.textContent="Publication en cours…"; m.textContent=""; b.disabled=true; return; }
   b.disabled=false;
   if(!canEdit()){
-    t.textContent="lecture seule"; b.textContent="connecter";
-    $("#syncbox").title="Aucun jeton GitHub : consultation uniquement.";
+    t.textContent="Lecture seule";
+    m.textContent="Aucun jeton GitHub. Consultation uniquement.";
+    b.textContent="Connecter";
   } else if(dirty){
-    t.textContent = dirty+" modif. en attente"; b.textContent="publier";
-    $("#syncbox").title = lastSync ? "Dernier envoi à "+lastSync : "Jamais publié depuis cette session";
+    t.textContent = dirty+" modification"+(dirty>1?"s":"")+" en attente";
+    m.textContent = lastSync ? "Dernier envoi à "+lastSync : "Jamais publié depuis cette session";
+    b.textContent="Publier";
   } else {
-    t.textContent = lastSync ? "publié à "+lastSync : "à jour"; b.textContent="publier";
-    $("#syncbox").title = CFG.user+"/"+CFG.repo+"/"+CFG.file;
+    t.textContent="À jour";
+    m.textContent = lastSync ? CFG.user+"/"+CFG.repo+" · publié à "+lastSync : CFG.user+"/"+CFG.repo+" · connecté";
+    b.textContent="Publier";
   }
 }
 $("#sync-btn").addEventListener("click", async ()=>{
@@ -778,7 +1042,7 @@ $("#sync-out").addEventListener("click", ()=>{
 });
 
 function serialiser(){
-  const j = o => JSON.stringify(o,null,1).replace(/<\//g,"<\\/");
+  const j = o => JSON.stringify(o,null,1).replace(/<\//g,"<\\/");  // évite de casser la balise script
   return M_DEB + "\n"
     + "let CFG = "    + j(CFG)    + ";\n\n"
     + "let STYLES = " + j(STYLES) + ";\n\n"
@@ -802,13 +1066,13 @@ async function push(){
       const html = new TextDecoder("utf-8").decode(
         Uint8Array.from(atob(meta.content.replace(/\n/g,"")), c=>c.charCodeAt(0)));
       if(!motif.test(html)) throw new Error("marqueurs de données introuvables dans le fichier distant");
-      const out = html.replace(motif, ()=>bloc);
+      const out = html.replace(motif, ()=>bloc);   // fonction : neutralise les motifs $ des données
       const bytes = new TextEncoder().encode(out);
       let bin=""; const CH=8192;
       for(let i=0;i<bytes.length;i+=CH) bin += String.fromCharCode.apply(null, bytes.subarray(i,i+CH));
       const res = await fetch(url,{method:"PUT",headers:{...h,"Content-Type":"application/json"},
         body:JSON.stringify({message:"Mise à jour du carnet de tables",content:btoa(bin),sha:meta.sha})});
-      if(res.status===409 && essai<2) continue;
+      if(res.status===409 && essai<2) continue;   // sha périmé : on relit et on retente
       if(!res.ok) throw new Error("écriture : HTTP "+res.status);
       envoye=true;
     }
@@ -820,28 +1084,23 @@ async function push(){
 }
 const touch = () => { dirty++; renderSync(); };
 
-/* ---------- filtres ---------- */
-function initFiltres(){
-  chips("#f-style", [{v:"",l:"Tous"}].concat(STYLES.map(s=>({v:s,l:s}))),
-        {value:chipValue("#f-style")||""});
-  chips("#f-dist", [{v:"",l:"Toutes"}]
-        .concat(DISTINCTIONS.filter(d=>d!=="—").map(d=>({v:d,l:d})))
-        .concat([{v:"—",l:"Sans distinction"}]),
-        {value:chipValue("#f-dist")||""});
+/* ---------- menus ---------- */
+function fillSelects(){
+  const fill=(sel,arr,all)=>{
+    const el=$(sel), keep=el.value;
+    el.innerHTML = (all?`<option value="">${all}</option>`:"") + arr.map(v=>`<option>${esc(v)}</option>`).join("");
+    if([...el.options].some(o=>o.value===keep)) el.value=keep;
+  };
+  fill("#f-style",STYLES,"Tous styles");
+  fill("#fr-style",STYLES);
+  fill("#fr-gamme",GAMMES);
+  fill("#f-dist",DISTINCTIONS.filter(d=>d!=="—"),"Toutes distinctions");
+  fill("#fr-distinction",DISTINCTIONS);
 }
-function majBadge(){
-  const n = (chipValue("#f-style")?1:0) + (chipValue("#f-dist")?1:0);
-  $("#nfiltres").hidden = !n; $("#nfiltres").textContent = n;
-}
-$("#togfiltres").addEventListener("click", ()=>{
-  const ferme = $("#filters").hidden;
-  $("#filters").hidden = !ferme;
-  $("#togfiltres").setAttribute("aria-expanded", String(ferme));
-});
 
 /* ---------- liste ---------- */
 function visible(){
-  const q=$("#q").value.trim().toLowerCase(), fs=chipValue("#f-style"), fd=chipValue("#f-dist");
+  const q=$("#q").value.trim().toLowerCase(), fs=$("#f-style").value, fd=$("#f-dist").value;
   return RESTOS
     .filter(r => tab==="afaire" ? r.statut==="afaire" : r.statut==="faite")
     .filter(r => !q  || (r.nom+" "+r.commune).toLowerCase().includes(q))
@@ -857,6 +1116,7 @@ function visible(){
     });
 }
 const sc = n => n==null?"s-lo":n>=9?"s-hi":n>=7?"s-mid":"s-lo";
+
 function updateCounts(){
   $("#c-faites").textContent = RESTOS.filter(r=>r.statut==="faite").length;
   $("#c-afaire").textContent = RESTOS.filter(r=>r.statut==="afaire").length;
@@ -876,22 +1136,15 @@ function renderList(){
 }
 
 /* ---------- carte ---------- */
-function initMap(){
-  if(map || typeof L==="undefined") return;
-  map = L.map("map",{scrollWheelZoom:false}).setView([centre.la,centre.lo],9);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(map);
-  layer = L.layerGroup().addTo(map);
-  map.on("moveend", ()=>{ const c=map.getCenter(); centre={la:c.lat, lo:c.lng}; });
-}
-function renderMap(cadrer){
-  if(cadrer===undefined) cadrer=true;
-  if(typeof L==="undefined"){
-    $("#map").innerHTML='<div class="empty"><strong>Carte indisponible</strong>Leaflet ne s\'est pas chargé. Vérifiez la connexion.</div>';
-    return;
+function renderMap(){
+  if(typeof L==="undefined"){ $("#map").innerHTML='<div class="empty"><strong>Carte indisponible</strong>Leaflet ne s\'est pas chargé. Vérifiez la connexion.</div>'; return; }
+  if(!map){
+    map = L.map("map",{scrollWheelZoom:false}).setView([48.72,7.62],9);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(map);
+    layer = L.layerGroup().addTo(map);
   }
-  initMap();
   layer.clearLayers();
-  const f=chipValue("#m-filtre");
+  const f=$("#m-filtre").value;
   const sel = RESTOS.filter(r => f==="tout"||r.statut===f);
   const pts = sel.filter(r=>r.la&&r.lo);
   pts.forEach(r=>{
@@ -901,77 +1154,32 @@ function renderMap(cadrer){
       html:`<span class="b"><span class="n">${done?r.note:"·"}</span>${esc(r.nom)}</span>`});
     L.marker([r.la,r.lo],{icon,title:r.nom}).addTo(layer).on("click",()=>openSheet(r.id));
   });
-  if(cadrer && pts.length) map.fitBounds(L.latLngBounds(pts.map(r=>[r.la,r.lo])).pad(.18),{maxZoom:13});
+  if(pts.length) map.fitBounds(L.latLngBounds(pts.map(r=>[r.la,r.lo])).pad(.18),{maxZoom:13});
   const manque = sel.length - pts.length;
   $("#maphint").textContent = manque
     ? manque+" table"+(manque>1?"s":"")+" sans repère : la commune n'a pas encore pu être localisée."
     : "";
-  setTimeout(()=>{ if(map) map.invalidateSize(); },60);
+  setTimeout(()=>map.invalidateSize(),60);
 }
-function distance(la1,lo1,la2,lo2){
-  const R=6371, rad=x=>x*Math.PI/180;
-  const dLa=rad(la2-la1), dLo=rad(lo2-lo1);
-  const a=Math.sin(dLa/2)**2 + Math.cos(rad(la1))*Math.cos(rad(la2))*Math.sin(dLo/2)**2;
-  return 2*R*Math.asin(Math.sqrt(a));
-}
-$("#m-loc").addEventListener("click", ()=>{
-  if(!navigator.geolocation){ $("#maphint").textContent="Ce navigateur ne sait pas vous localiser."; return; }
-  $("#maphint").textContent="Localisation en cours…";
-  navigator.geolocation.getCurrentPosition(
-    p=>{
-      initMap(); if(!map){ $("#maphint").textContent="Carte indisponible."; return; }
-      const la=p.coords.latitude, lo=p.coords.longitude;
-      if(moiMarker) map.removeLayer(moiMarker);
-      moiMarker = L.marker([la,lo],{zIndexOffset:1000, icon:L.divIcon({className:"pin moi",
-        iconSize:null, iconAnchor:[12,12],
-        html:'<span class="b"><span class="n">◉</span>Vous êtes ici</span>'})}).addTo(map);
-      map.setView([la,lo],12);
-      const proche = RESTOS.filter(r=>r.la&&r.lo)
-        .map(r=>({r, d:distance(la,lo,r.la,r.lo)})).sort((a,b)=>a.d-b.d)[0];
-      $("#maphint").textContent = proche
-        ? "Table la plus proche : "+proche.r.nom+", à "+proche.d.toFixed(1)+" km à vol d'oiseau."
-        : "Position trouvée.";
-    },
-    err=>{
-      $("#maphint").textContent = err.code===1
-        ? "Localisation refusée. Autorisez l'accès à la position dans les réglages du navigateur."
-        : "Localisation impossible pour le moment.";
-    },
-    {enableHighAccuracy:false, timeout:10000, maximumAge:300000}
-  );
-});
-async function allerA(){
-  const q=$("#m-q").value.trim();
-  if(!q) return;
-  $("#maphint").textContent="Recherche du lieu…";
-  try{
-    const f=(await photon(q,{tags:false,limit:1}))[0];
-    if(!f){ $("#maphint").textContent="Lieu introuvable."; return; }
-    initMap(); if(!map){ $("#maphint").textContent="Carte indisponible."; return; }
-    const co=f.geometry.coordinates, p=f.properties;
-    map.setView([co[1],co[0]],13);
-    $("#maphint").textContent = "Vue centrée sur "+(p.name||q)+(p.city&&p.city!==p.name?", "+p.city:"")+".";
-  }catch(e){ $("#maphint").textContent="Recherche indisponible."; }
-}
-$("#m-go").addEventListener("click", allerA);
-$("#m-q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); allerA(); } });
 
 /* ---------- podiums ---------- */
-function podium(o){
-  const li = o.rows.length
-    ? `<ol>${o.rows.map((r,i)=>`<li><span class="rk">${i+1}</span><span class="nm">${esc(r.nom)}</span><span class="vl">${r.v}${o.unite}</span></li>`).join("")}</ol>`
+function podium({titre, moyenne, unite, rows, total}){
+  const li = rows.length
+    ? `<ol>${rows.map((r,i)=>`<li><span class="rk">${i+1}</span><span class="nm">${esc(r.nom)}</span><span class="vl">${r.v}${unite}</span></li>`).join("")}</ol>`
     : `<div class="none">Pas encore de données.</div>`;
-  return `<div class="pod"><h3>${esc(o.titre)}</h3>
-    <div class="moy">${o.moyenne!=null?o.moyenne.toFixed(1):"—"}<small> moyenne · ${o.total} table${o.total>1?"s":""}</small></div>${li}</div>`;
+  return `<div class="pod"><h3>${esc(titre)}</h3>
+    <div class="moy">${moyenne!=null?moyenne.toFixed(1):"—"}<small> moyenne · ${total} table${total>1?"s":""}</small></div>${li}</div>`;
 }
 function renderPodiums(){
   const done = RESTOS.filter(r=>r.statut==="faite");
+
   $("#pod-crit").innerHTML = CRITERES.map(c=>{
     const set = done.filter(r=>r.crit && r.crit[c.k]!=null)
                     .sort((a,b)=> b.crit[c.k]-a.crit[c.k] || (b.note??0)-(a.note??0));
     return podium({titre:c.l, moyenne:avg(set.map(r=>r.crit[c.k])), unite:"/5", total:set.length,
       rows:set.slice(0,3).map(r=>({nom:r.nom, v:r.crit[c.k]}))});
   }).join("");
+
   const cards = STYLES.map(s=>{
     const set = done.filter(r=>r.style===s && r.note!=null).sort((a,b)=>b.note-a.note);
     if(!set.length) return "";
@@ -998,13 +1206,14 @@ function renderStats(){
   let g="";
   for(let n=0;n<=10;n+=2) g+=`<line x1="${Lm}" y1="${py(n)}" x2="${W-Rm}" y2="${py(n)}" stroke="#CDCEC5"/><text x="${Lm-10}" y="${py(n)+4}" text-anchor="end" font-family="IBM Plex Mono" font-size="11" fill="#5A6068">${n}</text>`;
   RANG_LAB.forEach((l,i)=>g+=`<text x="${px(i)}" y="${H-28}" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#5A6068">${l.toUpperCase()}</text>`);
-  g+=`<line x1="${Lm}" y1="${py(0)}" x2="${W-Rm}" y2="${py(0)}" stroke="#191D23" stroke-width="2"/>`;
+  g+=`<line x1="${Lm}" y1="${py(0)}" x2="${W-Rm}" y2="${py(0)}" stroke="#191D23"/>`;
   const pl=RANG_LAB.map((_,i)=>{const s=done.filter(r=>RANG[r.distinction]===i);return s.length?`${px(i)},${py(avg(s.map(r=>r.note)))}`:null}).filter(Boolean).join(" ");
   if(pl) g+=`<polyline points="${pl}" fill="none" stroke="#6E2038" stroke-width="1.5" stroke-dasharray="4 3" opacity=".55"/>`;
   done.forEach(r=>g+=`<circle cx="${px(RANG[r.distinction]||0)}" cy="${py(r.note)}" r="6.5" fill="#6E2038" fill-opacity="${.2+r.note/16}" stroke="#6E2038"><title>${esc(r.nom)} — ${r.note}/10</title></circle>`);
   $("#plot").innerHTML=g;
 
   renderPodiums();
+
   $("#topfive").innerHTML = done.slice().sort((a,b)=>b.note-a.note).slice(0,5).map((r,i)=>`
     <div><span class="r">${i+1}</span><span class="t">${esc(r.nom)} <span style="color:var(--soft)">· ${esc(r.commune)}</span></span><span class="v">${r.note}</span></div>`).join("");
 }
@@ -1016,9 +1225,9 @@ function renderReglages(){
     return `<div class="cfgrow" data-i="${i}">
       <input type="text" value="${esc(v)}" aria-label="Libellé du style">
       <span class="used">${used}</span>
-      <button type="button" class="btn btn-sm" data-mv="-1"${i>0?"":" disabled"} aria-label="Monter">↑</button>
-      <button type="button" class="btn btn-sm" data-mv="1"${i<STYLES.length-1?"":" disabled"} aria-label="Descendre">↓</button>
-      <button type="button" class="btn btn-sm" data-rm="1"${used?" disabled":""} aria-label="Supprimer">×</button>
+      <button type="button" class="btn btn-sm" data-mv="-1" ${i>0?"":"disabled"} aria-label="Monter">↑</button>
+      <button type="button" class="btn btn-sm" data-mv="1" ${i<STYLES.length-1?"":"disabled"} aria-label="Descendre">↓</button>
+      <button type="button" class="btn btn-sm" data-rm="1" ${used?"disabled":""} aria-label="Supprimer">×</button>
     </div>`;
   }).join("");
   $("#cfg-user").value=CFG.user; $("#cfg-repo").value=CFG.repo; $("#cfg-file").value=CFG.file;
@@ -1027,16 +1236,16 @@ $("#view-reglages").addEventListener("click", e=>{
   if(!canEdit()) return;
   if(e.target.id==="add-style"){
     const n=prompt("Nouveau style :");
-    if(n && n.trim() && !STYLES.includes(n.trim())){ STYLES.push(n.trim()); initFiltres(); renderReglages(); touch(); }
+    if(n && n.trim() && !STYLES.includes(n.trim())){ STYLES.push(n.trim()); fillSelects(); renderReglages(); touch(); }
     return;
   }
   const row=e.target.closest(".cfgrow"); if(!row) return;
   const i=+row.dataset.i;
   if(e.target.dataset.mv){
     const j=i+ +e.target.dataset.mv;
-    [STYLES[i],STYLES[j]]=[STYLES[j],STYLES[i]]; initFiltres(); renderReglages(); touch();
+    [STYLES[i],STYLES[j]]=[STYLES[j],STYLES[i]]; fillSelects(); renderReglages(); touch();
   } else if(e.target.dataset.rm){
-    STYLES.splice(i,1); initFiltres(); renderReglages(); touch();
+    STYLES.splice(i,1); fillSelects(); renderReglages(); touch();
   }
 });
 $("#view-reglages").addEventListener("change", e=>{
@@ -1047,7 +1256,7 @@ $("#view-reglages").addEventListener("change", e=>{
     if(!nv || nv===old || STYLES.includes(nv)){ renderReglages(); return; }
     STYLES[i]=nv;
     RESTOS.forEach(r=>{ if(r.style===old) r.style=nv; });
-    initFiltres(); renderReglages(); touch();
+    fillSelects(); renderReglages(); touch();
     return;
   }
   if(e.target.id==="cfg-user") CFG.user=e.target.value.trim();
@@ -1067,16 +1276,14 @@ function openSheet(id){
   $("#sheet-title").textContent = editing ? r.nom : "Nouvelle table";
   $("#ro-note").hidden = !ro;
   $("#f-nom").value=r.nom; $("#f-commune").value=r.commune; $("#f-date").value=r.date||"";
-  $("#f-format").value=r.format||""; $("#f-prix").value=r.prix??"";
-  $("#f-note-in").value=r.note??""; $("#f-com").value=r.com||"";
-  chips("#fr-style", STYLES.map(s=>({v:s,l:s})), {value:r.style, disabled:ro});
-  chips("#fr-distinction", DISTINCTIONS.map(d=>({v:d,l:d==="—"?"Aucune":d})), {value:r.distinction, disabled:ro});
-  chips("#fr-gamme", GAMMES.map(g=>({v:g,l:g==="—"?"N.C.":g})), {value:r.gamme, disabled:ro});
-  chips("#f-statut", [{v:"faite",l:"Table faite"},{v:"afaire",l:"À faire"}], {value:r.statut, disabled:ro});
+  $("#fr-style").value=r.style; $("#fr-gamme").value=r.gamme;
+  $("#fr-distinction").value=r.distinction; $("#f-format").value=r.format||"";
+  $("#f-prix").value=r.prix??""; $("#f-note-in").value=r.note??"";
+  $("#f-com").value=r.com||""; $("#f-statut").value=r.statut;
   $("#crits").innerHTML = CRITERES.map(c=>`
     <div class="crit"><label>${c.l}</label>
       <span class="stars" data-c="${c.k}">${[1,2,3,4,5].map(n=>
-        `<button type="button" data-n="${n}" class="${(r.crit&&r.crit[c.k]||0)>=n?"on":""}"${ro?" disabled":""} aria-label="${c.l} : ${n} sur 5">★</button>`).join("")}</span>
+        `<button type="button" data-n="${n}" class="${(r.crit&&r.crit[c.k]||0)>=n?"on":""}" ${ro?"disabled":""} aria-label="${c.l} : ${n} sur 5">★</button>`).join("")}</span>
     </div>`).join("");
   $$("#form input,#form select,#form textarea").forEach(el=>el.disabled=ro);
   $("#save").hidden=ro; $("#del").hidden = ro || !editing;
@@ -1084,38 +1291,17 @@ function openSheet(id){
   $("#sheet").showModal();
 }
 $("#crits").addEventListener("click", e=>{
-  const b=e.target.closest("button[data-n]"); if(!b || b.disabled) return;
-  const freres=[...b.parentNode.children];
-  const actuel=freres.filter(x=>x.classList.contains("on")).length;
-  const cible = (actuel===+b.dataset.n) ? 0 : +b.dataset.n;   // recliquer la même étoile efface
-  freres.forEach(x=>x.classList.toggle("on", +x.dataset.n <= cible));
+  const b=e.target.closest("button[data-n]"); if(!b||!canEdit()) return;
+  [...b.parentNode.children].forEach(x=>x.classList.toggle("on", +x.dataset.n <= +b.dataset.n));
 });
 
-/* ---------- autocomplétion (Photon / OpenStreetMap) ---------- */
+/* ---------- autocomplétion restaurants (Photon / OpenStreetMap) ---------- */
 let acT=null, acCoords={la:null,lo:null};
-const TAGS = ["amenity:restaurant","amenity:cafe","amenity:pub","amenity:bar","amenity:fast_food",
-              "amenity:biergarten","tourism:hotel","tourism:guest_house"];
-const LIBELLE = {restaurant:"restaurant",cafe:"café",pub:"pub",bar:"bar",fast_food:"snack",
-                 biergarten:"brasserie",hotel:"hôtel",guest_house:"auberge"};
-async function photon(q,opts){
-  opts = opts || {};
-  const tags = opts.tags===false ? "" : "&"+TAGS.map(x=>"osm_tag="+x).join("&");
-  const limit = opts.limit || 8;
-  const r = await fetch("https://photon.komoot.io/api/?q="+encodeURIComponent(q)
-    + "&lang=fr&lat="+centre.la+"&lon="+centre.lo+"&zoom=12&limit="+limit+tags);
+async function photon(q, restaurantsOnly){
+  const tags = restaurantsOnly ? "&osm_tag=amenity:restaurant&osm_tag=amenity:cafe&osm_tag=amenity:pub" : "";
+  const r = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=48.7&lon=7.7&zoom=11&limit=6${tags}`);
   if(!r.ok) throw new Error("photon");
   return (await r.json()).features || [];
-}
-function fusionner(a,b){
-  const vus=new Set(), out=[];
-  for(const f of a.concat(b)){
-    const p=f.properties;
-    if(!p.name) continue;
-    const cle = p.name.toLowerCase()+"|"+f.geometry.coordinates.map(c=>c.toFixed(3)).join(",");
-    if(vus.has(cle)) continue;
-    vus.add(cle); out.push(f);
-  }
-  return out.slice(0,9);
 }
 $("#f-nom").addEventListener("input", ()=>{
   clearTimeout(acT);
@@ -1125,23 +1311,17 @@ $("#f-nom").addEventListener("input", ()=>{
   $("#ac").innerHTML='<div class="st">Recherche…</div>'; $("#ac").hidden=false;
   acT=setTimeout(async ()=>{
     try{
-      // deux requêtes en parallèle : les lieux de restauration, puis l'index général.
-      // Beaucoup de maisons alsaciennes ne portent pas le tag « restaurant » dans OSM.
-      const res = await Promise.all([
-        photon(q,{tags:true, limit:8}).catch(()=>[]),
-        photon(q,{tags:false,limit:6}).catch(()=>[])
-      ]);
-      const items = fusionner(res[0],res[1]);
+      let items = await photon(q,true);
+      if(!items.length) items = await photon(q,false);
+      items = items.filter(f=>f.properties.name);
       if(!items.length){ $("#ac").innerHTML='<div class="st">Aucun résultat. Saisissez le nom et la commune à la main.</div>'; return; }
       $("#ac")._items=items;
       $("#ac").innerHTML = items.map((f,i)=>{
         const p=f.properties;
-        const kind = LIBELLE[p.osm_value] || "";
-        const adr = [p.street,p.city||p.county,p.postcode].filter(Boolean).join(", ");
-        return `<button type="button" data-i="${i}">${kind?`<span class="kind">${kind}</span>`:""}${esc(p.name)}<small>${esc(adr||"—")}</small></button>`;
+        return `<button type="button" data-i="${i}">${esc(p.name)}<small>${esc([p.street,p.city||p.county,p.postcode].filter(Boolean).join(", "))}</small></button>`;
       }).join("");
     }catch(e){ $("#ac").innerHTML='<div class="st">Recherche indisponible. Saisissez le nom et la commune à la main.</div>'; }
-  },300);
+  },320);
 });
 $("#ac").addEventListener("click", e=>{
   const b=e.target.closest("button[data-i]"); if(!b) return;
@@ -1154,10 +1334,10 @@ $("#ac").addEventListener("click", e=>{
 document.addEventListener("click", e=>{
   if(!e.target.closest("#ac") && e.target.id!=="f-nom") $("#ac").hidden=true;
 });
-async function localiserCommune(commune){
+async function localiser(commune){
   if(!commune) return null;
   try{
-    const f = (await photon(commune+", Alsace", {tags:false,limit:1}))[0];
+    const f = (await photon(commune+", Alsace", false))[0];
     return f ? {la:+f.geometry.coordinates[1].toFixed(5), lo:+f.geometry.coordinates[0].toFixed(5)} : null;
   }catch(e){ return null; }
 }
@@ -1169,27 +1349,26 @@ $("#form").addEventListener("submit", async e=>{
   $$("#crits .stars").forEach(s=>{ const n=[...s.children].filter(b=>b.classList.contains("on")).length; if(n) crit[s.dataset.c]=n; });
   const data={
     nom:$("#f-nom").value.trim(), commune:$("#f-commune").value.trim(),
-    style:chipValue("#fr-style"), gamme:chipValue("#fr-gamme"),
-    distinction:chipValue("#fr-distinction"),
-    note:$("#f-note-in").value===""?null:+$("#f-note-in").value,
+    style:$("#fr-style").value, gamme:$("#fr-gamme").value,
+    distinction:$("#fr-distinction").value, note:$("#f-note-in").value===""?null:+$("#f-note-in").value,
     date:$("#f-date").value, prix:$("#f-prix").value===""?null:+$("#f-prix").value,
-    format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:chipValue("#f-statut")
+    format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:$("#f-statut").value
   };
   const btn=$("#save"); btn.disabled=true; btn.textContent="Enregistrement…";
-  let fiche;
-  if(editing){ Object.assign(editing,data); fiche=editing; }
-  else { fiche={id:Math.max(0,...RESTOS.map(r=>r.id))+1, la:null, lo:null, ...data}; RESTOS.push(fiche); }
-  if(acCoords.la){ fiche.la=acCoords.la; fiche.lo=acCoords.lo; }
-  if(!fiche.la && fiche.commune){
-    const c = await localiserCommune(fiche.commune);
-    if(c){ fiche.la=c.la; fiche.lo=c.lo; }
+  let cible;
+  if(editing){ Object.assign(editing,data); cible=editing; }
+  else { cible={id:Math.max(0,...RESTOS.map(r=>r.id))+1, la:null, lo:null, ...data}; RESTOS.push(cible); }
+  if(acCoords.la){ cible.la=acCoords.la; cible.lo=acCoords.lo; }
+  if(!cible.la && cible.commune){
+    const c = await localiser(cible.commune);
+    if(c){ cible.la=c.la; cible.lo=c.lo; }
   }
   btn.disabled=false; btn.textContent="Enregistrer";
   $("#sheet").close(); touch(); render();
 });
 $("#cancel").addEventListener("click", ()=>$("#sheet").close());
 $("#del").addEventListener("click", ()=>{
-  if(editing && canEdit() && confirm("Supprimer « "+editing.nom+" » ?")){
+  if(editing && canEdit() && confirm(`Supprimer « ${editing.nom} » ?`)){
     RESTOS=RESTOS.filter(r=>r.id!==editing.id);
     $("#sheet").close(); touch(); render();
   }
@@ -1197,7 +1376,7 @@ $("#del").addEventListener("click", ()=>{
 
 $("#csv").addEventListener("click", ()=>{
   const cols=["nom","commune","style","gamme","distinction","note","date","prix","format","statut","com"];
-  const ligne = r => cols.map(c=>'"'+String(r[c]??"").replace(/"/g,'""')+'"').join(";");
+  const ligne = r => cols.map(c=>`"${String(r[c]??"").replace(/"/g,'""')}"`).join(";");
   const csv=[cols.join(";")].concat(RESTOS.map(ligne)).join("\r\n");
   const a=document.createElement("a");
   a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
@@ -1222,7 +1401,8 @@ $$(".head button").forEach(b=>b.addEventListener("click", ()=>{
   renderList();
 }));
 $("#list").addEventListener("click", e=>{ const r=e.target.closest(".row"); if(r) openSheet(+r.dataset.id); });
-$("#q").addEventListener("input", renderList);
+$("#m-filtre").addEventListener("change", renderMap);
+["#q","#f-style","#f-dist"].forEach(s=>$(s).addEventListener("input", renderList));
 $("#add").addEventListener("click", ()=>openSheet(null));
 document.addEventListener("keydown", e=>{
   if(e.key==="n" && canEdit() && !/input|textarea|select/i.test(e.target.tagName) && !$("#sheet").open){
@@ -1239,20 +1419,7 @@ function render(){
   else if(tab==="reglages") renderReglages();
   else renderList();
 }
-
-/* ---------- démarrage ---------- */
-initFiltres();
-chips("#m-filtre", [{v:"tout",l:"Toutes"},{v:"faite",l:"Faites"},{v:"afaire",l:"À faire"}], {value:"tout"});
-onChips("#f-style", ()=>{ majBadge(); renderList(); });
-onChips("#f-dist",  ()=>{ majBadge(); renderList(); });
-onChips("#m-filtre", ()=>renderMap(true));
-["#fr-style","#fr-distinction","#fr-gamme","#f-statut"].forEach(h=>onChips(h, ()=>{}));
-majBadge();
-if(window.matchMedia && window.matchMedia("(max-width:700px)").matches){
-  $("#filters").hidden = true;
-  $("#togfiltres").setAttribute("aria-expanded","false");
-}
-render();
+fillSelects(); render();
 </script>
 </body>
 </html>
