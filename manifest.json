@@ -1,0 +1,26 @@
+{
+  "name": "Carnet de tables",
+  "short_name": "Tables",
+  "description": "Carnet personnel de restaurants : notes, critères et carte.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#E7E8E1",
+  "theme_color": "#E7E8E1",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

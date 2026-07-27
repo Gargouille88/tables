@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Carnet de tables">
+  <rect width="512" height="512" fill="#E7E8E1"/>
+  <circle cx="256" cy="248" r="96" fill="#6E2038"/>
+  <path d="M212 218 v-30 M228 218 v-30 M244 218 v-30 M228 218 v66"
+        stroke="#F5F5F0" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M288 188 c19 0 26 18 26 37 c0 14 -8 21 -16 22 v41"
+        stroke="#F5F5F0" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

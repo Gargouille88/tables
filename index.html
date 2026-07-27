@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E7E8E1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tables">
+<meta name="description" content="Carnet personnel de restaurants : notes, critères, carte.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Carnet de tables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --ground:#E7E8E1; --card:#F5F5F0; --ink:#191D23; --soft:#5A6068;
+  --line:#CDCEC5; --garnet:#6E2038; --sage:#6B7A62; --brass:#A4863C; --r:3px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px calc(80px + env(safe-area-inset-bottom))}
+
+.masthead{padding:30px 0 0}
+.masthead h1{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 100,"wght" 500;font-size:clamp(32px,7vw,54px);line-height:.98;margin:0;letter-spacing:-.02em}
+.masthead h1 em{font-style:italic;font-variation-settings:"opsz" 100,"wght" 300}
+.rule{height:1px;background:var(--ink);margin:20px 0 0;opacity:.75}
+
+.sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--soft);padding:11px 14px;margin-top:18px;font-size:13px}
+.sync.ok{border-left-color:var(--sage)}
+.sync.pending{border-left-color:var(--brass)}
+.sync .dot{width:8px;height:8px;border-radius:50%;background:var(--soft);flex:0 0 auto}
+.sync.ok .dot{background:var(--sage)}
+.sync.pending .dot{background:var(--brass)}
+.sync .txt{flex:1 1 190px;min-width:0}
+.sync .txt b{font-weight:600}
+.sync .meta{display:block;color:var(--soft);font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis}
+
+.tabs{display:flex;border-bottom:1px solid var(--line);margin-top:22px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;padding:12px 15px 10px;margin-bottom:-1px;cursor:pointer;color:var(--soft);font-family:inherit;font-size:13px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--garnet);font-weight:600}
+.tab .count{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.55;margin-left:6px}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 14px}
+input[type=text],input[type=number],input[type=date],select,textarea{font-family:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:9px 10px;min-height:42px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--garnet);outline-offset:2px}
+#q{flex:1 1 200px;min-width:140px}
+.btn{font-family:inherit;font-size:14px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:9px 14px;cursor:pointer;min-height:42px}
+.btn:hover{border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn-solid{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.btn-solid:hover{background:var(--garnet);border-color:var(--garnet)}
+.btn-quiet{background:none;border-color:transparent;color:var(--soft)}
+.btn-quiet:hover{color:var(--garnet)}
+.btn-sm{min-height:34px;padding:5px 10px;font-size:13px}
+[hidden]{display:none!important}
+
+.list{border-top:1px solid var(--line)}
+.row,.head{display:grid;grid-template-columns:1fr 178px 96px 62px;gap:14px;align-items:center}
+.row{padding:13px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;width:100%;text-align:left;font-family:inherit;font-size:inherit;color:inherit}
+.row:hover{background:rgba(110,32,56,.05)}
+.row .name{font-weight:600;letter-spacing:-.01em}
+.row .place{font-size:12.5px;color:var(--soft)}
+.head{padding:0 4px 8px;border-bottom:1px solid var(--ink);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.head button{background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;text-align:left}
+.head button:last-child{text-align:right}
+.head .on{color:var(--ink);font-weight:500}
+.c-style{font-size:12.5px;color:var(--ink)}
+.gamme{font-size:11.5px;color:var(--soft);display:block;font-family:"IBM Plex Mono",monospace;letter-spacing:.06em}
+.c-dist{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--brass);letter-spacing:.03em}
+.c-dist.none{color:var(--line)}
+.c-note{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 60,"wght" 500;font-size:22px;text-align:right;letter-spacing:-.02em}
+.s-hi{color:var(--garnet)} .s-mid{color:var(--ink)} .s-lo{color:var(--soft);opacity:.65}
+.empty{padding:52px 8px;color:var(--soft);text-align:center}
+.empty strong{display:block;font-family:"Fraunces",Georgia,serif;font-size:19px;color:var(--ink);margin-bottom:6px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:20px 0 30px}
+.kpi{background:var(--card);padding:15px 14px}
+.kpi .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft)}
+.kpi .v{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 90,"wght" 500;font-size:29px;line-height:1.15;margin-top:5px;letter-spacing:-.02em}
+.kpi .v small{font-size:15px;color:var(--soft);font-variation-settings:"wght" 300}
+.kpi .v.sm{font-size:17px;line-height:1.3}
+
+.panel{margin-bottom:34px}
+.panel h2{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 100,"wght" 500;font-size:21px;margin:0 0 3px;letter-spacing:-.01em}
+.panel p.sub{margin:0 0 15px;font-size:13px;color:var(--soft);max-width:64ch}
+.plot{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line)}
+.top{border-top:1px solid var(--line)}
+.top div{display:flex;justify-content:space-between;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.top .r{font-family:"IBM Plex Mono",monospace;color:var(--soft);font-size:12px;width:22px;flex:0 0 22px}
+.top .t{flex:1;min-width:0}
+.top .v{font-family:"IBM Plex Mono",monospace}
+
+.podiums{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
+.pod{background:var(--card);border:1px solid var(--line);padding:14px 15px 10px}
+.pod h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);margin:0 0 4px}
+.pod .moy{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 60,"wght" 500;font-size:20px;letter-spacing:-.02em;margin-bottom:8px}
+.pod .moy small{font-size:12px;color:var(--soft);font-family:"IBM Plex Mono",monospace;font-variation-settings:normal;letter-spacing:0}
+.pod ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.pod li{display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.pod li:last-child{border-bottom:0}
+.pod .rk{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);flex:0 0 14px}
+.pod .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pod .vl{font-family:"IBM Plex Mono",monospace;font-size:12.5px;flex:0 0 auto}
+.pod .none{padding:8px 0;font-size:12.5px;color:var(--soft)}
+
+#map{height:min(72vh,620px);border:1px solid var(--line);background:var(--card)}
+.pin{background:none;border:0}
+.pin .b{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--ink);border-radius:14px;padding:2px 9px 2px 3px;white-space:nowrap;font-family:"IBM Plex Sans",sans-serif;font-size:12px;line-height:1.5;box-shadow:0 1px 3px rgba(25,29,35,.22)}
+.pin .n{display:flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;background:var(--garnet);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;flex:0 0 auto}
+.pin.todo .b{border-style:dashed;border-color:var(--soft);color:var(--soft)}
+.pin.todo .n{background:none;border:1px dashed var(--soft);color:var(--soft)}
+.pin.lo .n{background:#B07E8D}
+.pin.mid .n{background:#8E3A52}
+.leaflet-container{font-family:"IBM Plex Sans",sans-serif}
+.maphint{font-size:12.5px;color:var(--soft);margin-top:9px}
+
+.cfglist{border-top:1px solid var(--line);margin-bottom:12px}
+.cfgrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid var(--line)}
+.cfgrow input{flex:1;min-width:0}
+.cfgrow .used{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);flex:0 0 auto;min-width:16px;text-align:right}
+
+dialog{border:1px solid var(--ink);border-radius:var(--r);padding:0;background:var(--card);color:var(--ink);width:min(620px,94vw);max-height:90vh}
+dialog::backdrop{background:rgba(25,29,35,.45)}
+.sheet{padding:22px 24px 24px}
+.sheet h3{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 100,"wght" 500;font-size:23px;margin:0 0 16px;letter-spacing:-.015em}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px;position:relative}
+.field.full{grid-column:1/-1}
+.field label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.field input,.field select,.field textarea{width:100%}
+.field .hint{font-size:11.5px;color:var(--soft)}
+textarea{resize:vertical;min-height:64px;line-height:1.45}
+.ac{position:absolute;top:100%;left:0;right:0;z-index:5;background:var(--card);border:1px solid var(--ink);max-height:210px;overflow:auto}
+.ac button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:9px 10px;cursor:pointer;font:inherit;font-size:13.5px}
+.ac button:hover{background:rgba(110,32,56,.07)}
+.ac small{display:block;color:var(--soft);font-size:11.5px}
+.ac .st{padding:9px 10px;font-size:12.5px;color:var(--soft)}
+.crit{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.crit label{font-size:13px}
+.stars{display:flex;gap:2px}
+.stars button{background:none;border:0;padding:4px;cursor:pointer;font-size:16px;color:var(--line);line-height:1}
+.stars button.on{color:var(--brass)}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.actions .left{margin-right:auto}
+.ro-note{background:rgba(90,96,104,.09);border:1px solid var(--line);padding:9px 11px;font-size:12.5px;color:var(--soft);margin-bottom:14px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--soft)}
+.foot code{font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--card);padding:1px 5px;border:1px solid var(--line)}
+
+@media (max-width:700px){
+  .head{display:none}
+  .row{grid-template-columns:1fr auto;grid-template-areas:"nom note" "style dist";gap:3px 12px;padding:14px 2px}
+  .c-nom{grid-area:nom;min-width:0}
+  .c-note{grid-area:note;font-size:25px;align-self:start}
+  .c-style{grid-area:style}
+  .c-dist{grid-area:dist;text-align:right;align-self:center}
+  .grid{grid-template-columns:1fr}
+  dialog{width:100vw;max-width:100vw;max-height:100vh;height:100vh;border:0;border-radius:0}
+  .sheet{padding:20px 18px calc(28px + env(safe-area-inset-bottom))}
+  #map{height:64vh}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>Carnet de <em>tables</em></h1>
+    <div class="rule"></div>
+  </header>
+
+  <div class="sync" id="syncbox" role="status">
+    <span class="dot"></span>
+    <span class="txt"><b id="sync-t">Lecture seule</b><span class="meta" id="sync-m"></span></span>
+    <button class="btn btn-sm" id="sync-btn">Connecter</button>
+    <button class="btn btn-sm btn-quiet" id="sync-out" hidden>Déconnecter</button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="faites" aria-selected="true">Tables <span class="count" id="c-faites"></span></button>
+    <button class="tab" role="tab" data-tab="afaire" aria-selected="false">À faire <span class="count" id="c-afaire"></span></button>
+    <button class="tab" role="tab" data-tab="carte" aria-selected="false">Carte</button>
+    <button class="tab" role="tab" data-tab="stats" aria-selected="false">Statistiques</button>
+    <button class="tab" role="tab" data-tab="reglages" aria-selected="false" id="tab-reglages" hidden>Réglages</button>
+  </div>
+
+  <section id="view-liste">
+    <div class="toolbar">
+      <input type="text" id="q" placeholder="Chercher…" aria-label="Recherche">
+      <select id="f-style" aria-label="Filtrer par style"><option value="">Tous styles</option></select>
+      <select id="f-dist" aria-label="Filtrer par distinction"><option value="">Toutes distinctions</option></select>
+      <button class="btn btn-solid" id="add">+ Nouvelle table</button>
+      <button class="btn btn-quiet" id="csv">CSV</button>
+    </div>
+    <div class="head">
+      <button data-sort="nom">Table</button>
+      <button data-sort="style">Style</button>
+      <button data-sort="distinction">Michelin</button>
+      <button data-sort="note">Note</button>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section id="view-carte" hidden>
+    <div class="toolbar">
+      <select id="m-filtre" aria-label="Afficher">
+        <option value="tout">Toutes les tables</option>
+        <option value="faite">Tables faites</option>
+        <option value="afaire">À faire</option>
+      </select>
+      <span style="font-size:12.5px;color:var(--soft)">Touchez un repère pour ouvrir la fiche.</span>
+    </div>
+    <div id="map"></div>
+    <p class="maphint" id="maphint"></p>
+  </section>
+
+  <section id="view-stats" hidden>
+    <div class="kpis" id="kpis"></div>
+
+    <div class="panel">
+      <h2>Note contre distinction</h2>
+      <p class="sub">Chaque table faite, selon sa distinction au guide et votre note. Un nuage plat signifie que les macarons ne prédisent pas votre plaisir.</p>
+      <svg class="plot" id="plot" viewBox="0 0 720 330" role="img" aria-label="Note par distinction Michelin"></svg>
+    </div>
+
+    <div class="panel">
+      <h2>Classement par critère</h2>
+      <p class="sub">Les meilleures tables sur chacun des quatre critères, notés sur 5. Seules les fiches où le critère est renseigné entrent dans le classement.</p>
+      <div class="podiums" id="pod-crit"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Classement par style</h2>
+      <p class="sub">Le haut du panier dans chaque famille, avec la moyenne du style.</p>
+      <div class="podiums" id="pod-style"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Toutes tables confondues</h2>
+      <div class="top" id="topfive"></div>
+    </div>
+  </section>
+
+  <section id="view-reglages" hidden>
+    <div class="panel">
+      <h2>Styles</h2>
+      <p class="sub">La classification, de la plus codifiée à la plus personnelle. Renommer met à jour toutes les fiches concernées ; supprimer n'est possible que si aucune table ne l'utilise. Le compteur indique combien de tables portent chaque style.</p>
+      <div class="cfglist" id="cfg-styles"></div>
+      <button class="btn btn-sm" id="add-style">+ Ajouter un style</button>
+    </div>
+    <div class="panel">
+      <h2>Dépôt GitHub</h2>
+      <p class="sub">Où la publication écrit. Le fichier doit contenir les deux marqueurs de données.</p>
+      <div class="grid">
+        <div class="field"><label for="cfg-user">Compte</label><input type="text" id="cfg-user"></div>
+        <div class="field"><label for="cfg-repo">Dépôt</label><input type="text" id="cfg-repo"></div>
+        <div class="field"><label for="cfg-file">Fichier</label><input type="text" id="cfg-file"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    Données entre les marqueurs <code>/*&#32;__DATA_DEBUT__&#32;*/</code> et <code>/*&#32;__DATA_FIN__&#32;*/</code>. Sans jeton, l'app est en lecture seule.
+  </footer>
+</div>
+
+<dialog id="sheet">
+  <form method="dialog" class="sheet" id="form">
+    <h3 id="sheet-title">Nouvelle table</h3>
+    <div class="ro-note" id="ro-note" hidden>Lecture seule. Connectez un jeton GitHub pour modifier cette fiche.</div>
+    <div class="grid">
+      <div class="field full">
+        <label for="f-nom">Nom du restaurant</label>
+        <input type="text" id="f-nom" autocomplete="off" required placeholder="Trois lettres suffisent pour chercher">
+        <div class="ac" id="ac" hidden></div>
+        <span class="hint">Les suggestions viennent de la base des restaurants OpenStreetMap.</span>
+      </div>
+      <div class="field"><label for="f-commune">Commune</label><input type="text" id="f-commune"></div>
+      <div class="field"><label for="f-date">Date de la visite</label><input type="date" id="f-date"></div>
+      <div class="field"><label for="fr-style">Style</label><select id="fr-style"></select></div>
+      <div class="field"><label for="fr-gamme">Gamme de prix</label><select id="fr-gamme"></select></div>
+      <div class="field"><label for="fr-distinction">Distinction</label><select id="fr-distinction"></select></div>
+      <div class="field"><label for="f-format">Format</label>
+        <select id="f-format"><option value="">—</option><option>Carte</option><option>Menu unique</option><option>Menu dégustation</option></select>
+      </div>
+      <div class="field"><label for="f-prix">Ticket par personne (€)</label><input type="number" id="f-prix" min="0" step="1"></div>
+      <div class="field"><label for="f-note-in">Note globale sur 10</label><input type="number" id="f-note-in" min="0" max="10" step="1"></div>
+      <div class="field full"><label>Critères</label><div id="crits"></div></div>
+      <div class="field full"><label for="f-com">Commentaire</label><textarea id="f-com" placeholder="Ce qui a marqué, en bien comme en mal."></textarea></div>
+      <div class="field full"><label for="f-statut">Statut</label>
+        <select id="f-statut"><option value="faite">Table faite</option><option value="afaire">À faire</option></select>
+      </div>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn btn-quiet left" id="del" hidden>Supprimer</button>
+      <button type="button" class="btn" id="cancel">Fermer</button>
+      <button type="submit" class="btn btn-solid" id="save">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ============================================================
+   CARNET DE TABLES
+   Fichier unique, architecture « thes » / « bibliotheque » / « flambee ».
+   Les données vivent entre les deux marqueurs ci-dessous ; la
+   publication les réécrit sur place via l'API GitHub.
+   ============================================================ */
+
+/* __DATA_DEBUT__ */
+let CFG = {user:"gargouille88", repo:"tables", file:"index.html"};
+
+let STYLES = [
+ "Classique bourgeois",
+ "Terroir & régional",
+ "Bistronomie",
+ "Gastronomique contemporain",
+ "Cuisine d'auteur"
+];
+
+let RESTOS = [
+ {id:1, nom:"La Table d'Olivier Nasti", commune:"Kaysersberg", la:48.1394, lo:7.2647, style:"Cuisine d'auteur", gamme:"€€€€", distinction:"2 étoiles", note:10, date:"", prix:null, format:"Menu dégustation", com:"", crit:{}, statut:"faite"},
+ {id:2, nom:"Villa René Lalique", commune:"Wingen-sur-Moder", la:48.9185, lo:7.3647, style:"Cuisine d'auteur", gamme:"€€€€", distinction:"2 étoiles", note:10, date:"", prix:null, format:"Menu dégustation", com:"Cave hors norme, cadre Mario Botta.", crit:{cuisine:5,cadre:5,service:5,qp:4}, statut:"faite"},
+ {id:3, nom:"Ondine", commune:"Strasbourg", la:48.5805, lo:7.7419, style:"Cuisine d'auteur", gamme:"€€€", distinction:"—", note:9, date:"", prix:null, format:"Menu unique", com:"Douze couverts, végétal et fermentations.", crit:{cuisine:5,cadre:4,service:5,qp:5}, statut:"faite"},
+ {id:4, nom:"Le Binôme", commune:"Haguenau", la:48.8129, lo:7.7890, style:"Bistronomie", gamme:"€€", distinction:"—", note:8, date:"", prix:null, format:"Carte", com:"Poulpe grillé en signature.", crit:{}, statut:"faite"},
+ {id:5, nom:"Les Semailles", commune:"La Wantzenau", la:48.6636, lo:7.8264, style:"Gastronomique contemporain", gamme:"€€€", distinction:"—", note:8, date:"", prix:null, format:"", com:"Distinction à vérifier.", crit:{}, statut:"faite"},
+ {id:6, nom:"Le Jardin", commune:"Haguenau", la:48.8107, lo:7.7917, style:"Bistronomie", gamme:"€€", distinction:"Bib Gourmand", note:8, date:"", prix:null, format:"Carte", com:"Menu Retour du Marché très bien placé.", crit:{}, statut:"faite"},
+ {id:7, nom:"Le Marronnier", commune:"Stutzheim-Offenheim", la:48.6289, lo:7.6403, style:"Bistronomie", gamme:"€€", distinction:"—", note:7, date:"", prix:null, format:"", com:"", crit:{}, statut:"faite"},
+ {id:8, nom:"Auberge au Cheval Blanc", commune:"Lembach", la:49.0031, lo:7.7906, style:"Gastronomique contemporain", gamme:"€€€€", distinction:"1 étoile", note:7, date:"", prix:null, format:"Menu dégustation", com:"", crit:{}, statut:"faite"},
+ {id:9, nom:"Le Cygne", commune:"Gundershoffen", la:48.9066, lo:7.6588, style:"Terroir & régional", gamme:"€€€", distinction:"—", note:6, date:"", prix:null, format:"Carte", com:"Généreux, peu de signature.", crit:{}, statut:"faite"},
+ {id:10, nom:"La Merise", commune:"Laubach", la:48.8800, lo:7.7224, style:"Classique bourgeois", gamme:"€€€€", distinction:"2 étoiles", note:5, date:"", prix:null, format:"Menu dégustation", com:"Beau classicisme, art des jus.", crit:{}, statut:"faite"},
+ {id:11, nom:"Au Bœuf Rouge", commune:"Niederschaeffolsheim", la:48.7724, lo:7.7343, style:"Classique bourgeois", gamme:"€€€", distinction:"—", note:4, date:"", prix:null, format:"Carte", com:"", crit:{}, statut:"faite"},
+ {id:12, nom:"L'Aura", commune:"Marmoutier", la:48.6905, lo:7.3809, style:"Terroir & régional", gamme:"€€", distinction:"—", note:4, date:"", prix:null, format:"", com:"", crit:{}, statut:"faite"},
+ {id:13, nom:"Le Cerf", commune:"Marlenheim", la:48.6210, lo:7.4936, style:"Classique bourgeois", gamme:"€€€", distinction:"1 étoile", note:3, date:"", prix:null, format:"Carte", com:"Noté 4 à la première visite, 3 à la seconde.", crit:{cuisine:2,cadre:3,service:3,qp:2}, statut:"faite"},
+
+ {id:14, nom:"Villa K", commune:"Oberlauterbach", la:48.9494, lo:8.0136, style:"Cuisine d'auteur", gamme:"€€€", distinction:"—", note:null, date:"", prix:null, format:"Menu unique", com:"Vingt couverts, menu à l'aveugle. Rappeler pour un désistement.", crit:{}, statut:"afaire"},
+ {id:15, nom:"Umami", commune:"Strasbourg", la:48.5806, lo:7.7422, style:"Cuisine d'auteur", gamme:"€€€", distinction:"1 étoile", note:null, date:"", prix:null, format:"Menu unique", com:"Seize couverts, le soir du lundi au vendredi.", crit:{}, statut:"afaire"},
+ {id:16, nom:"de:ja", commune:"Strasbourg", la:48.5875, lo:7.7750, style:"Cuisine d'auteur", gamme:"€€€", distinction:"1 étoile", note:null, date:"", prix:null, format:"", com:"", crit:{}, statut:"afaire"},
+ {id:17, nom:"Nyd – 48° Nord", commune:"Breitenbach", la:48.3706, lo:7.2884, style:"Cuisine d'auteur", gamme:"€€€", distinction:"Étoile verte", note:null, date:"", prix:null, format:"Menu unique", com:"Le soir uniquement.", crit:{}, statut:"afaire"},
+ {id:18, nom:"La Table du Gourmet", commune:"Riquewihr", la:48.1667, lo:7.2978, style:"Cuisine d'auteur", gamme:"€€€€", distinction:"1 étoile", note:null, date:"", prix:null, format:"Menu dégustation", com:"Prix Michelin Sommellerie 2026.", crit:{}, statut:"afaire"},
+ {id:19, nom:"Au Vieux Moulin", commune:"Graufthal", la:48.8212, lo:7.2815, style:"Terroir & régional", gamme:"€€€", distinction:"—", note:null, date:"", prix:null, format:"Carte", com:"Réservé.", crit:{}, statut:"afaire"}
+];
+/* __DATA_FIN__ */
+
+const GAMMES = ["€","€€","€€€","€€€€","—"];
+const DISTINCTIONS = ["—","Bib Gourmand","Étoile verte","1 étoile","2 étoiles","3 étoiles"];
+const RANG = {"—":0,"Étoile verte":0,"Bib Gourmand":1,"1 étoile":2,"2 étoiles":3,"3 étoiles":4};
+const RANG_LAB = ["Sans distinction","Bib Gourmand","1 étoile","2 étoiles","3 étoiles"];
+const CRITERES = [{k:"cuisine",l:"Cuisine"},{k:"cadre",l:"Cadre"},{k:"service",l:"Service"},{k:"qp",l:"Rapport qualité-prix"}];
+const M_DEB = "/*" + " __DATA_DEBUT__ " + "*/";   // assemblés par morceaux : le fichier
+const M_FIN = "/*" + " __DATA_FIN__ " + "*/";     // ne contient qu'une seule vraie occurrence de chacun
+
+/* ---------- jeton ---------- */
+let TOKEN = (()=>{ try{ return localStorage.getItem("gh_token"); }catch(e){ return null; } })();
+function setToken(t){
+  TOKEN = t || null;
+  try{ t ? localStorage.setItem("gh_token",t) : localStorage.removeItem("gh_token"); }catch(e){}
+}
+const canEdit = () => !!TOKEN;
+
+let tab="faites", sortKey="note", sortDir=-1, editing=null, dirty=0, lastSync=null,
+    syncing=false, map=null, layer=null;
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const avg = a => a.length ? a.reduce((s,x)=>s+x,0)/a.length : null;
+
+/* ---------- synchro ---------- */
+function renderSync(){
+  const t=$("#sync-t"), m=$("#sync-m"), b=$("#sync-btn");
+  $("#syncbox").className = "sync " + (!canEdit() ? "" : dirty ? "pending" : "ok");
+  $("#tab-reglages").hidden = !canEdit();
+  $("#add").hidden = !canEdit();
+  $("#sync-out").hidden = !canEdit();
+  if(syncing){ t.textContent="Publication en cours…"; m.textContent=""; b.disabled=true; return; }
+  b.disabled=false;
+  if(!canEdit()){
+    t.textContent="Lecture seule";
+    m.textContent="Aucun jeton GitHub. Consultation uniquement.";
+    b.textContent="Connecter";
+  } else if(dirty){
+    t.textContent = dirty+" modification"+(dirty>1?"s":"")+" en attente";
+    m.textContent = lastSync ? "Dernier envoi à "+lastSync : "Jamais publié depuis cette session";
+    b.textContent="Publier";
+  } else {
+    t.textContent="À jour";
+    m.textContent = lastSync ? CFG.user+"/"+CFG.repo+" · publié à "+lastSync : CFG.user+"/"+CFG.repo+" · connecté";
+    b.textContent="Publier";
+  }
+}
+$("#sync-btn").addEventListener("click", async ()=>{
+  if(!canEdit()){
+    const t = prompt("Jeton GitHub (portée contents:write) :");
+    if(t && t.trim()){ setToken(t.trim()); dirty=0; render(); }
+    return;
+  }
+  await push();
+});
+$("#sync-out").addEventListener("click", ()=>{
+  if(dirty && !confirm(dirty+" modification(s) non publiée(s) seront perdues. Continuer ?")) return;
+  setToken(null); dirty=0;
+  if(tab==="reglages") selectTab("faites"); else render();
+});
+
+function serialiser(){
+  const j = o => JSON.stringify(o,null,1).replace(/<\//g,"<\\/");  // évite de casser la balise script
+  return M_DEB + "\n"
+    + "let CFG = "    + j(CFG)    + ";\n\n"
+    + "let STYLES = " + j(STYLES) + ";\n\n"
+    + "let RESTOS = " + j(RESTOS) + ";\n"
+    + M_FIN;
+}
+async function push(){
+  if(!canEdit() || syncing) return;
+  syncing=true; renderSync();
+  const url=`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${CFG.file}`;
+  const h={Authorization:"token "+TOKEN, Accept:"application/vnd.github+json"};
+  const bloc = serialiser();
+  const ech = t => t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  const motif = new RegExp(ech(M_DEB) + "[\\s\\S]*?" + ech(M_FIN));
+  try{
+    let envoye=false, essai=0;
+    while(!envoye && essai<2){
+      essai++;
+      const meta = await fetch(url,{headers:h,cache:"no-store"})
+        .then(r=>{ if(!r.ok) throw new Error("lecture du fichier : HTTP "+r.status); return r.json(); });
+      const html = new TextDecoder("utf-8").decode(
+        Uint8Array.from(atob(meta.content.replace(/\n/g,"")), c=>c.charCodeAt(0)));
+      if(!motif.test(html)) throw new Error("marqueurs de données introuvables dans le fichier distant");
+      const out = html.replace(motif, ()=>bloc);   // fonction : neutralise les motifs $ des données
+      const bytes = new TextEncoder().encode(out);
+      let bin=""; const CH=8192;
+      for(let i=0;i<bytes.length;i+=CH) bin += String.fromCharCode.apply(null, bytes.subarray(i,i+CH));
+      const res = await fetch(url,{method:"PUT",headers:{...h,"Content-Type":"application/json"},
+        body:JSON.stringify({message:"Mise à jour du carnet de tables",content:btoa(bin),sha:meta.sha})});
+      if(res.status===409 && essai<2) continue;   // sha périmé : on relit et on retente
+      if(!res.ok) throw new Error("écriture : HTTP "+res.status);
+      envoye=true;
+    }
+    dirty=0; lastSync=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){
+    alert("Publication impossible.\n"+e.message+"\n\nVérifiez le jeton et les champs du dépôt dans Réglages.");
+  }
+  syncing=false; renderSync();
+}
+const touch = () => { dirty++; renderSync(); };
+
+/* ---------- menus ---------- */
+function fillSelects(){
+  const fill=(sel,arr,all)=>{
+    const el=$(sel), keep=el.value;
+    el.innerHTML = (all?`<option value="">${all}</option>`:"") + arr.map(v=>`<option>${esc(v)}</option>`).join("");
+    if([...el.options].some(o=>o.value===keep)) el.value=keep;
+  };
+  fill("#f-style",STYLES,"Tous styles");
+  fill("#fr-style",STYLES);
+  fill("#fr-gamme",GAMMES);
+  fill("#f-dist",DISTINCTIONS.filter(d=>d!=="—"),"Toutes distinctions");
+  fill("#fr-distinction",DISTINCTIONS);
+}
+
+/* ---------- liste ---------- */
+function visible(){
+  const q=$("#q").value.trim().toLowerCase(), fs=$("#f-style").value, fd=$("#f-dist").value;
+  return RESTOS
+    .filter(r => tab==="afaire" ? r.statut==="afaire" : r.statut==="faite")
+    .filter(r => !q  || (r.nom+" "+r.commune).toLowerCase().includes(q))
+    .filter(r => !fs || r.style===fs)
+    .filter(r => !fd || r.distinction===fd)
+    .sort((a,b)=>{
+      let x=a[sortKey], y=b[sortKey];
+      if(sortKey==="distinction"){ x=RANG[x]??0; y=RANG[y]??0; }
+      else if(sortKey==="style"){ x=STYLES.indexOf(x); y=STYLES.indexOf(y); }
+      else if(sortKey==="note"){ x=x??-1; y=y??-1; }
+      else { x=x??""; y=y??""; }
+      return typeof x==="string" ? x.localeCompare(y,"fr")*sortDir : (x-y)*sortDir;
+    });
+}
+const sc = n => n==null?"s-lo":n>=9?"s-hi":n>=7?"s-mid":"s-lo";
+
+function updateCounts(){
+  $("#c-faites").textContent = RESTOS.filter(r=>r.statut==="faite").length;
+  $("#c-afaire").textContent = RESTOS.filter(r=>r.statut==="afaire").length;
+}
+function renderList(){
+  const rows=visible();
+  $("#list").innerHTML = rows.length ? rows.map(r=>`
+    <button class="row" data-id="${r.id}">
+      <span class="c-nom"><span class="name">${esc(r.nom)}</span><br><span class="place">${esc(r.commune)||"—"}${r.format?" · "+esc(r.format):""}</span></span>
+      <span class="c-style">${esc(r.style)}<span class="gamme">${esc(r.gamme)}</span></span>
+      <span class="c-dist ${r.distinction==="—"?"none":""}">${esc(r.distinction)}</span>
+      <span class="c-note ${sc(r.note)}">${r.note==null?"—":r.note}</span>
+    </button>`).join("")
+    : `<div class="empty"><strong>Rien pour l'instant</strong>${tab==="afaire"?"Ajoutez les tables que vous voulez tester.":"Ajoutez votre première table."}</div>`;
+  updateCounts();
+  $$(".head button").forEach(b=>b.classList.toggle("on", b.dataset.sort===sortKey));
+}
+
+/* ---------- carte ---------- */
+function renderMap(){
+  if(typeof L==="undefined"){ $("#map").innerHTML='<div class="empty"><strong>Carte indisponible</strong>Leaflet ne s\'est pas chargé. Vérifiez la connexion.</div>'; return; }
+  if(!map){
+    map = L.map("map",{scrollWheelZoom:false}).setView([48.72,7.62],9);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(map);
+    layer = L.layerGroup().addTo(map);
+  }
+  layer.clearLayers();
+  const f=$("#m-filtre").value;
+  const sel = RESTOS.filter(r => f==="tout"||r.statut===f);
+  const pts = sel.filter(r=>r.la&&r.lo);
+  pts.forEach(r=>{
+    const done = r.statut==="faite" && r.note!=null;
+    const cls  = !done ? "todo" : r.note>=9 ? "" : r.note>=7 ? "mid" : "lo";
+    const icon = L.divIcon({className:"pin "+cls, iconSize:null, iconAnchor:[12,12],
+      html:`<span class="b"><span class="n">${done?r.note:"·"}</span>${esc(r.nom)}</span>`});
+    L.marker([r.la,r.lo],{icon,title:r.nom}).addTo(layer).on("click",()=>openSheet(r.id));
+  });
+  if(pts.length) map.fitBounds(L.latLngBounds(pts.map(r=>[r.la,r.lo])).pad(.18),{maxZoom:13});
+  const manque = sel.length - pts.length;
+  $("#maphint").textContent = manque
+    ? manque+" table"+(manque>1?"s":"")+" sans repère : la commune n'a pas encore pu être localisée."
+    : "";
+  setTimeout(()=>map.invalidateSize(),60);
+}
+
+/* ---------- podiums ---------- */
+function podium({titre, moyenne, unite, rows, total}){
+  const li = rows.length
+    ? `<ol>${rows.map((r,i)=>`<li><span class="rk">${i+1}</span><span class="nm">${esc(r.nom)}</span><span class="vl">${r.v}${unite}</span></li>`).join("")}</ol>`
+    : `<div class="none">Pas encore de données.</div>`;
+  return `<div class="pod"><h3>${esc(titre)}</h3>
+    <div class="moy">${moyenne!=null?moyenne.toFixed(1):"—"}<small> moyenne · ${total} table${total>1?"s":""}</small></div>${li}</div>`;
+}
+function renderPodiums(){
+  const done = RESTOS.filter(r=>r.statut==="faite");
+
+  $("#pod-crit").innerHTML = CRITERES.map(c=>{
+    const set = done.filter(r=>r.crit && r.crit[c.k]!=null)
+                    .sort((a,b)=> b.crit[c.k]-a.crit[c.k] || (b.note??0)-(a.note??0));
+    return podium({titre:c.l, moyenne:avg(set.map(r=>r.crit[c.k])), unite:"/5", total:set.length,
+      rows:set.slice(0,3).map(r=>({nom:r.nom, v:r.crit[c.k]}))});
+  }).join("");
+
+  const cards = STYLES.map(s=>{
+    const set = done.filter(r=>r.style===s && r.note!=null).sort((a,b)=>b.note-a.note);
+    if(!set.length) return "";
+    return podium({titre:s, moyenne:avg(set.map(r=>r.note)), unite:"/10", total:set.length,
+      rows:set.slice(0,3).map(r=>({nom:r.nom, v:r.note}))});
+  }).filter(Boolean).join("");
+  $("#pod-style").innerHTML = cards || `<div class="pod"><div class="none">Aucune table notée.</div></div>`;
+}
+
+/* ---------- statistiques ---------- */
+function renderStats(){
+  const done = RESTOS.filter(r=>r.statut==="faite" && r.note!=null);
+  const moy = avg(done.map(r=>r.note));
+  const best = STYLES.map(s=>({s,n:done.filter(r=>r.style===s).length,m:avg(done.filter(r=>r.style===s).map(r=>r.note))}))
+                     .filter(x=>x.n).sort((a,b)=>b.m-a.m)[0];
+  $("#kpis").innerHTML = `
+    <div class="kpi"><div class="k">Tables faites</div><div class="v">${done.length}</div></div>
+    <div class="kpi"><div class="k">Note moyenne</div><div class="v">${moy!=null?moy.toFixed(1):"—"}<small> / 10</small></div></div>
+    <div class="kpi"><div class="k">Style préféré</div><div class="v sm">${best?esc(best.s):"—"}</div></div>
+    <div class="kpi"><div class="k">À faire</div><div class="v">${RESTOS.filter(r=>r.statut==="afaire").length}</div></div>`;
+
+  const W=720,H=330,Lm=64,Rm=24,T=20,B=52;
+  const px=v=>Lm+v/4*(W-Lm-Rm), py=v=>T+(10-v)/10*(H-T-B);
+  let g="";
+  for(let n=0;n<=10;n+=2) g+=`<line x1="${Lm}" y1="${py(n)}" x2="${W-Rm}" y2="${py(n)}" stroke="#CDCEC5"/><text x="${Lm-10}" y="${py(n)+4}" text-anchor="end" font-family="IBM Plex Mono" font-size="11" fill="#5A6068">${n}</text>`;
+  RANG_LAB.forEach((l,i)=>g+=`<text x="${px(i)}" y="${H-28}" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#5A6068">${l.toUpperCase()}</text>`);
+  g+=`<line x1="${Lm}" y1="${py(0)}" x2="${W-Rm}" y2="${py(0)}" stroke="#191D23"/>`;
+  const pl=RANG_LAB.map((_,i)=>{const s=done.filter(r=>RANG[r.distinction]===i);return s.length?`${px(i)},${py(avg(s.map(r=>r.note)))}`:null}).filter(Boolean).join(" ");
+  if(pl) g+=`<polyline points="${pl}" fill="none" stroke="#6E2038" stroke-width="1.5" stroke-dasharray="4 3" opacity=".55"/>`;
+  done.forEach(r=>g+=`<circle cx="${px(RANG[r.distinction]||0)}" cy="${py(r.note)}" r="6.5" fill="#6E2038" fill-opacity="${.2+r.note/16}" stroke="#6E2038"><title>${esc(r.nom)} — ${r.note}/10</title></circle>`);
+  $("#plot").innerHTML=g;
+
+  renderPodiums();
+
+  $("#topfive").innerHTML = done.slice().sort((a,b)=>b.note-a.note).slice(0,5).map((r,i)=>`
+    <div><span class="r">${i+1}</span><span class="t">${esc(r.nom)} <span style="color:var(--soft)">· ${esc(r.commune)}</span></span><span class="v">${r.note}</span></div>`).join("");
+}
+
+/* ---------- réglages ---------- */
+function renderReglages(){
+  $("#cfg-styles").innerHTML = STYLES.map((v,i)=>{
+    const used = RESTOS.filter(r=>r.style===v).length;
+    return `<div class="cfgrow" data-i="${i}">
+      <input type="text" value="${esc(v)}" aria-label="Libellé du style">
+      <span class="used">${used}</span>
+      <button type="button" class="btn btn-sm" data-mv="-1" ${i>0?"":"disabled"} aria-label="Monter">↑</button>
+      <button type="button" class="btn btn-sm" data-mv="1" ${i<STYLES.length-1?"":"disabled"} aria-label="Descendre">↓</button>
+      <button type="button" class="btn btn-sm" data-rm="1" ${used?"disabled":""} aria-label="Supprimer">×</button>
+    </div>`;
+  }).join("");
+  $("#cfg-user").value=CFG.user; $("#cfg-repo").value=CFG.repo; $("#cfg-file").value=CFG.file;
+}
+$("#view-reglages").addEventListener("click", e=>{
+  if(!canEdit()) return;
+  if(e.target.id==="add-style"){
+    const n=prompt("Nouveau style :");
+    if(n && n.trim() && !STYLES.includes(n.trim())){ STYLES.push(n.trim()); fillSelects(); renderReglages(); touch(); }
+    return;
+  }
+  const row=e.target.closest(".cfgrow"); if(!row) return;
+  const i=+row.dataset.i;
+  if(e.target.dataset.mv){
+    const j=i+ +e.target.dataset.mv;
+    [STYLES[i],STYLES[j]]=[STYLES[j],STYLES[i]]; fillSelects(); renderReglages(); touch();
+  } else if(e.target.dataset.rm){
+    STYLES.splice(i,1); fillSelects(); renderReglages(); touch();
+  }
+});
+$("#view-reglages").addEventListener("change", e=>{
+  if(!canEdit()) return;
+  const row=e.target.closest(".cfgrow");
+  if(row){
+    const i=+row.dataset.i, old=STYLES[i], nv=e.target.value.trim();
+    if(!nv || nv===old || STYLES.includes(nv)){ renderReglages(); return; }
+    STYLES[i]=nv;
+    RESTOS.forEach(r=>{ if(r.style===old) r.style=nv; });
+    fillSelects(); renderReglages(); touch();
+    return;
+  }
+  if(e.target.id==="cfg-user") CFG.user=e.target.value.trim();
+  if(e.target.id==="cfg-repo") CFG.repo=e.target.value.trim();
+  if(e.target.id==="cfg-file") CFG.file=e.target.value.trim();
+  renderSync(); touch();
+});
+
+/* ---------- fiche ---------- */
+function openSheet(id){
+  editing = id ? RESTOS.find(r=>r.id===id) : null;
+  const ro = !canEdit();
+  const today = new Date().toISOString().slice(0,10);
+  const r = editing || {nom:"",commune:"",la:null,lo:null,style:STYLES[2]||STYLES[0],gamme:"€€€",
+    distinction:"—",note:null,date:(tab==="afaire"?"":today),prix:null,format:"",com:"",crit:{},
+    statut:tab==="afaire"?"afaire":"faite"};
+  $("#sheet-title").textContent = editing ? r.nom : "Nouvelle table";
+  $("#ro-note").hidden = !ro;
+  $("#f-nom").value=r.nom; $("#f-commune").value=r.commune; $("#f-date").value=r.date||"";
+  $("#fr-style").value=r.style; $("#fr-gamme").value=r.gamme;
+  $("#fr-distinction").value=r.distinction; $("#f-format").value=r.format||"";
+  $("#f-prix").value=r.prix??""; $("#f-note-in").value=r.note??"";
+  $("#f-com").value=r.com||""; $("#f-statut").value=r.statut;
+  $("#crits").innerHTML = CRITERES.map(c=>`
+    <div class="crit"><label>${c.l}</label>
+      <span class="stars" data-c="${c.k}">${[1,2,3,4,5].map(n=>
+        `<button type="button" data-n="${n}" class="${(r.crit&&r.crit[c.k]||0)>=n?"on":""}" ${ro?"disabled":""} aria-label="${c.l} : ${n} sur 5">★</button>`).join("")}</span>
+    </div>`).join("");
+  $$("#form input,#form select,#form textarea").forEach(el=>el.disabled=ro);
+  $("#save").hidden=ro; $("#del").hidden = ro || !editing;
+  $("#ac").hidden=true; acCoords={la:null,lo:null};
+  $("#sheet").showModal();
+}
+$("#crits").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-n]"); if(!b||!canEdit()) return;
+  [...b.parentNode.children].forEach(x=>x.classList.toggle("on", +x.dataset.n <= +b.dataset.n));
+});
+
+/* ---------- autocomplétion restaurants (Photon / OpenStreetMap) ---------- */
+let acT=null, acCoords={la:null,lo:null};
+async function photon(q, restaurantsOnly){
+  const tags = restaurantsOnly ? "&osm_tag=amenity:restaurant&osm_tag=amenity:cafe&osm_tag=amenity:pub" : "";
+  const r = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=48.7&lon=7.7&zoom=11&limit=6${tags}`);
+  if(!r.ok) throw new Error("photon");
+  return (await r.json()).features || [];
+}
+$("#f-nom").addEventListener("input", ()=>{
+  clearTimeout(acT);
+  acCoords={la:null,lo:null};
+  const q=$("#f-nom").value.trim();
+  if(q.length<3 || !canEdit()){ $("#ac").hidden=true; return; }
+  $("#ac").innerHTML='<div class="st">Recherche…</div>'; $("#ac").hidden=false;
+  acT=setTimeout(async ()=>{
+    try{
+      let items = await photon(q,true);
+      if(!items.length) items = await photon(q,false);
+      items = items.filter(f=>f.properties.name);
+      if(!items.length){ $("#ac").innerHTML='<div class="st">Aucun résultat. Saisissez le nom et la commune à la main.</div>'; return; }
+      $("#ac")._items=items;
+      $("#ac").innerHTML = items.map((f,i)=>{
+        const p=f.properties;
+        return `<button type="button" data-i="${i}">${esc(p.name)}<small>${esc([p.street,p.city||p.county,p.postcode].filter(Boolean).join(", "))}</small></button>`;
+      }).join("");
+    }catch(e){ $("#ac").innerHTML='<div class="st">Recherche indisponible. Saisissez le nom et la commune à la main.</div>'; }
+  },320);
+});
+$("#ac").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-i]"); if(!b) return;
+  const f=$("#ac")._items[+b.dataset.i], p=f.properties;
+  $("#f-nom").value=p.name;
+  $("#f-commune").value=p.city||p.county||"";
+  acCoords={lo:+f.geometry.coordinates[0].toFixed(5), la:+f.geometry.coordinates[1].toFixed(5)};
+  $("#ac").hidden=true;
+});
+document.addEventListener("click", e=>{
+  if(!e.target.closest("#ac") && e.target.id!=="f-nom") $("#ac").hidden=true;
+});
+async function localiser(commune){
+  if(!commune) return null;
+  try{
+    const f = (await photon(commune+", Alsace", false))[0];
+    return f ? {la:+f.geometry.coordinates[1].toFixed(5), lo:+f.geometry.coordinates[0].toFixed(5)} : null;
+  }catch(e){ return null; }
+}
+
+$("#form").addEventListener("submit", async e=>{
+  e.preventDefault();
+  if(!canEdit()) return;
+  const crit={};
+  $$("#crits .stars").forEach(s=>{ const n=[...s.children].filter(b=>b.classList.contains("on")).length; if(n) crit[s.dataset.c]=n; });
+  const data={
+    nom:$("#f-nom").value.trim(), commune:$("#f-commune").value.trim(),
+    style:$("#fr-style").value, gamme:$("#fr-gamme").value,
+    distinction:$("#fr-distinction").value, note:$("#f-note-in").value===""?null:+$("#f-note-in").value,
+    date:$("#f-date").value, prix:$("#f-prix").value===""?null:+$("#f-prix").value,
+    format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:$("#f-statut").value
+  };
+  const btn=$("#save"); btn.disabled=true; btn.textContent="Enregistrement…";
+  let cible;
+  if(editing){ Object.assign(editing,data); cible=editing; }
+  else { cible={id:Math.max(0,...RESTOS.map(r=>r.id))+1, la:null, lo:null, ...data}; RESTOS.push(cible); }
+  if(acCoords.la){ cible.la=acCoords.la; cible.lo=acCoords.lo; }
+  if(!cible.la && cible.commune){
+    const c = await localiser(cible.commune);
+    if(c){ cible.la=c.la; cible.lo=c.lo; }
+  }
+  btn.disabled=false; btn.textContent="Enregistrer";
+  $("#sheet").close(); touch(); render();
+});
+$("#cancel").addEventListener("click", ()=>$("#sheet").close());
+$("#del").addEventListener("click", ()=>{
+  if(editing && canEdit() && confirm(`Supprimer « ${editing.nom} » ?`)){
+    RESTOS=RESTOS.filter(r=>r.id!==editing.id);
+    $("#sheet").close(); touch(); render();
+  }
+});
+
+$("#csv").addEventListener("click", ()=>{
+  const cols=["nom","commune","style","gamme","distinction","note","date","prix","format","statut","com"];
+  const ligne = r => cols.map(c=>`"${String(r[c]??"").replace(/"/g,'""')}"`).join(";");
+  const csv=[cols.join(";")].concat(RESTOS.map(ligne)).join("\r\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
+  a.download="carnet-de-tables.csv"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+
+/* ---------- navigation ---------- */
+function selectTab(name){
+  tab=name;
+  $$(".tab").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.tab===name)));
+  $("#view-liste").hidden    = !(name==="faites"||name==="afaire");
+  $("#view-carte").hidden    = name!=="carte";
+  $("#view-stats").hidden    = name!=="stats";
+  $("#view-reglages").hidden = name!=="reglages";
+  render();
+}
+$$(".tab").forEach(b=>b.addEventListener("click", ()=>selectTab(b.dataset.tab)));
+$$(".head button").forEach(b=>b.addEventListener("click", ()=>{
+  const k=b.dataset.sort;
+  if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir = k==="nom"?1:-1; }
+  renderList();
+}));
+$("#list").addEventListener("click", e=>{ const r=e.target.closest(".row"); if(r) openSheet(+r.dataset.id); });
+$("#m-filtre").addEventListener("change", renderMap);
+["#q","#f-style","#f-dist"].forEach(s=>$(s).addEventListener("input", renderList));
+$("#add").addEventListener("click", ()=>openSheet(null));
+document.addEventListener("keydown", e=>{
+  if(e.key==="n" && canEdit() && !/input|textarea|select/i.test(e.target.tagName) && !$("#sheet").open){
+    e.preventDefault(); openSheet(null);
+  }
+});
+window.addEventListener("beforeunload", e=>{ if(dirty){ e.preventDefault(); e.returnValue=""; } });
+
+function render(){
+  renderSync();
+  updateCounts();
+  if(tab==="stats") renderStats();
+  else if(tab==="carte") renderMap();
+  else if(tab==="reglages") renderReglages();
+  else renderList();
+}
+fillSelects(); render();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Carnet de tables">
+  <rect width="512" height="512" rx="96" fill="#E7E8E1"/>
+  <rect x="34" y="34" width="444" height="444" rx="70" fill="none" stroke="#191D23" stroke-width="6" opacity=".55"/>
+  <circle cx="256" cy="236" r="112" fill="#6E2038"/>
+  <circle cx="256" cy="236" r="112" fill="none" stroke="#191D23" stroke-width="6" opacity=".35"/>
+  <path d="M256 348 L214 424 h84 Z" fill="#6E2038"/>
+  <path d="M203 196 v-38 M222 196 v-38 M241 196 v-38 M222 196 v82"
+        stroke="#F5F5F0" stroke-width="11" stroke-linecap="round" fill="none"/>
+  <path d="M290 158 c22 0 30 22 30 44 c0 16 -9 24 -19 26 v50"
+        stroke="#F5F5F0" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
