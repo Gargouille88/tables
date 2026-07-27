@@ -59,24 +59,47 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .btn-quiet{background:none;border-color:transparent;color:var(--soft)}
 .btn-quiet:hover{color:var(--garnet)}
 .btn-sm{min-height:34px;padding:5px 10px;font-size:13px}
+.badge{display:inline-block;margin-left:6px;min-width:17px;padding:0 5px;border-radius:9px;background:var(--garnet);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:17px;text-align:center;vertical-align:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font-family:inherit;font-size:13px;background:var(--card);color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;min-height:38px;white-space:nowrap}
+.chips button:hover{border-color:var(--ink);color:var(--ink)}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground);font-weight:500}
+.chips button:disabled{opacity:.4;cursor:default}
+.chips button:disabled:hover{border-color:var(--line);color:var(--soft)}
+.filters{display:grid;gap:11px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.fg{display:flex;gap:11px;align-items:flex-start;flex-wrap:wrap}
+.fl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);padding-top:12px;flex:0 0 74px}
 [hidden]{display:none!important}
 
-.list{border-top:1px solid var(--line)}
+.list{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.row:last-child{border-bottom:0}
 .row,.head{display:grid;grid-template-columns:1fr 178px 96px 62px;gap:14px;align-items:center}
-.row{padding:13px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;width:100%;text-align:left;font-family:inherit;font-size:inherit;color:inherit}
-.row:hover{background:rgba(110,32,56,.05)}
-.row .name{font-weight:600;letter-spacing:-.01em}
-.row .place{font-size:12.5px;color:var(--soft)}
+.row{padding:15px 10px 15px 4px;border-bottom:1px solid var(--line);cursor:pointer;background:none;width:100%;text-align:left;font-family:inherit;font-size:inherit;color:inherit;transition:background .12s ease,box-shadow .12s ease}
+.row:hover{background:rgba(110,32,56,.045);box-shadow:inset 3px 0 0 var(--garnet)}
+.row .name{font-weight:600;letter-spacing:-.012em;font-size:15.5px;line-height:1.3}
+.row .place{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 14,"wght" 300;font-style:italic;font-size:13px;color:var(--soft);line-height:1.45}
 .head{padding:0 4px 8px;border-bottom:1px solid var(--ink);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
 .head button{background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;text-align:left}
 .head button:last-child{text-align:right}
 .head .on{color:var(--ink);font-weight:500}
-.c-style{font-size:12.5px;color:var(--ink)}
-.gamme{font-size:11.5px;color:var(--soft);display:block;font-family:"IBM Plex Mono",monospace;letter-spacing:.06em}
+.head .on::after{content:" ▾";font-size:9px;opacity:.8}
+.head .on[data-dir="asc"]::after{content:" ▴"}
+.c-style{font-size:12.5px;color:var(--ink);line-height:1.35}
+.c-style .tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 10px;
+  font-size:11.5px;line-height:1.5;background:var(--card);white-space:nowrap}
+.gamme{font-size:11px;color:var(--soft);display:block;margin-top:4px;font-family:"IBM Plex Mono",monospace;letter-spacing:.1em}
 .c-dist{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--brass);letter-spacing:.03em}
 .c-dist.none{color:var(--line)}
-.c-note{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 60,"wght" 500;font-size:22px;text-align:right;letter-spacing:-.02em}
-.s-hi{color:var(--garnet)} .s-mid{color:var(--ink)} .s-lo{color:var(--soft);opacity:.65}
+.c-note{display:flex;justify-content:flex-end}
+.note{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:31px;
+  border-radius:3px;border:1px solid transparent;font-family:"IBM Plex Mono",monospace;
+  font-size:15px;font-weight:500;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.note.n4{background:var(--garnet);border-color:var(--garnet);color:#F7F6F2}
+.note.n3{background:rgba(110,32,56,.13);border-color:rgba(110,32,56,.38);color:var(--garnet)}
+.note.n2{background:var(--card);border-color:var(--line);color:var(--ink)}
+.note.n1{background:none;border-color:var(--line);border-style:dashed;color:var(--soft)}
+.note.n0{background:none;border-color:transparent;color:var(--line)}
+
 .empty{padding:52px 8px;color:var(--soft);text-align:center}
 .empty strong{display:block;font-family:"Fraunces",Georgia,serif;font-size:19px;color:var(--ink);margin-bottom:6px}
 
@@ -91,7 +114,8 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .panel h2{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 100,"wght" 500;font-size:21px;margin:0 0 3px;letter-spacing:-.01em}
 .panel p.sub{margin:0 0 15px;font-size:13px;color:var(--soft);max-width:64ch}
 .plot{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line)}
-.top{border-top:1px solid var(--line)}
+.top{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.top div:last-child{border-bottom:0}
 .top div{display:flex;justify-content:space-between;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:14px}
 .top .r{font-family:"IBM Plex Mono",monospace;color:var(--soft);font-size:12px;width:22px;flex:0 0 22px}
 .top .t{flex:1;min-width:0}
@@ -102,13 +126,13 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .pod h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);margin:0 0 4px}
 .pod .moy{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 60,"wght" 500;font-size:20px;letter-spacing:-.02em;margin-bottom:8px}
 .pod .moy small{font-size:12px;color:var(--soft);font-family:"IBM Plex Mono",monospace;font-variation-settings:normal;letter-spacing:0}
-.pod ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.pod ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
 .pod li{display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .pod li:last-child{border-bottom:0}
 .pod .rk{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);flex:0 0 14px}
 .pod .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pod .vl{font-family:"IBM Plex Mono",monospace;font-size:12.5px;flex:0 0 auto}
-.pod .none{padding:8px 0;font-size:12.5px;color:var(--soft)}
+.pod .none{padding:8px 0;font-size:12.5px;color:var(--soft);border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
 
 #map{height:min(72vh,620px);border:1px solid var(--line);background:var(--card)}
 .pin{background:none;border:0}
@@ -119,9 +143,12 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .pin.lo .n{background:#B07E8D}
 .pin.mid .n{background:#8E3A52}
 .leaflet-container{font-family:"IBM Plex Sans",sans-serif}
-.maphint{font-size:12.5px;color:var(--soft);margin-top:9px}
+.maphint{font-size:12.5px;color:var(--soft);margin-top:9px;min-height:19px}
+.pin.moi .b{border-color:var(--sage);color:var(--sage)}
+.pin.moi .n{background:var(--sage)}
 
-.cfglist{border-top:1px solid var(--line);margin-bottom:12px}
+.cfglist{border-top:1px solid var(--line);border-bottom:2px solid var(--ink);margin-bottom:12px}
+.cfgrow:last-child{border-bottom:0}
 .cfgrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid var(--line)}
 .cfgrow input{flex:1;min-width:0}
 .cfgrow .used{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);flex:0 0 auto;min-width:16px;text-align:right}
@@ -133,7 +160,7 @@ dialog::backdrop{background:rgba(25,29,35,.45)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .field{display:flex;flex-direction:column;gap:5px;position:relative}
 .field.full{grid-column:1/-1}
-.field label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.field label,.field .lbl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
 .field input,.field select,.field textarea{width:100%}
 .field .hint{font-size:11.5px;color:var(--soft)}
 textarea{resize:vertical;min-height:64px;line-height:1.45}
@@ -141,8 +168,11 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
 .ac button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:9px 10px;cursor:pointer;font:inherit;font-size:13.5px}
 .ac button:hover{background:rgba(110,32,56,.07)}
 .ac small{display:block;color:var(--soft);font-size:11.5px}
+.ac .kind{float:right;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--brass);text-transform:uppercase;letter-spacing:.06em}
 .ac .st{padding:9px 10px;font-size:12.5px;color:var(--soft)}
+.crits-box{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
 .crit{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.crit:last-child{border-bottom:0}
 .crit label{font-size:13px}
 .stars{display:flex;gap:2px}
 .stars button{background:none;border:0;padding:4px;cursor:pointer;font-size:16px;color:var(--line);line-height:1}
@@ -150,17 +180,24 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
 .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
 .actions .left{margin-right:auto}
 .ro-note{background:rgba(90,96,104,.09);border:1px solid var(--line);padding:9px 11px;font-size:12.5px;color:var(--soft);margin-bottom:14px}
-.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--soft)}
-.foot code{font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--card);padding:1px 5px;border:1px solid var(--line)}
+.foot{margin-top:52px;padding-top:15px;border-top:1px solid var(--ink);display:flex;justify-content:space-between;
+  align-items:baseline;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--soft)}
+.foot .devise{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 20,"wght" 300;
+  font-style:italic;font-size:14px;color:var(--ink);opacity:.75}
+.foot .chiffres{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;white-space:nowrap}
+.foot .chiffres b{font-weight:500;color:var(--ink)}
 
 @media (max-width:700px){
   .head{display:none}
   .row{grid-template-columns:1fr auto;grid-template-areas:"nom note" "style dist";gap:3px 12px;padding:14px 2px}
   .c-nom{grid-area:nom;min-width:0}
-  .c-note{grid-area:note;font-size:25px;align-self:start}
+  .c-note{grid-area:note;align-self:start}
+  .note{min-width:48px;height:34px;font-size:16px}
   .c-style{grid-area:style}
   .c-dist{grid-area:dist;text-align:right;align-self:center}
   .grid{grid-template-columns:1fr}
+  .fg{display:block}
+  .fl{padding:0 0 6px;display:block}
   dialog{width:100vw;max-width:100vw;max-height:100vh;height:100vh;border:0;border-radius:0}
   .sheet{padding:20px 18px calc(28px + env(safe-area-inset-bottom))}
   #map{height:64vh}
@@ -194,10 +231,13 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
   <section id="view-liste">
     <div class="toolbar">
       <input type="text" id="q" placeholder="Chercher…" aria-label="Recherche">
-      <select id="f-style" aria-label="Filtrer par style"><option value="">Tous styles</option></select>
-      <select id="f-dist" aria-label="Filtrer par distinction"><option value="">Toutes distinctions</option></select>
+      <button class="btn" id="togfiltres" aria-expanded="true">Filtres<span class="badge" id="nfiltres" hidden></span></button>
       <button class="btn btn-solid" id="add">+ Nouvelle table</button>
       <button class="btn btn-quiet" id="csv">CSV</button>
+    </div>
+    <div class="filters" id="filters">
+      <div class="fg"><span class="fl">Style</span><div class="chips" id="f-style" data-value=""></div></div>
+      <div class="fg"><span class="fl">Distinction</span><div class="chips" id="f-dist" data-value=""></div></div>
     </div>
     <div class="head">
       <button data-sort="nom">Table</button>
@@ -210,12 +250,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
 
   <section id="view-carte" hidden>
     <div class="toolbar">
-      <select id="m-filtre" aria-label="Afficher">
-        <option value="tout">Toutes les tables</option>
-        <option value="faite">Tables faites</option>
-        <option value="afaire">À faire</option>
-      </select>
-      <span style="font-size:12.5px;color:var(--soft)">Touchez un repère pour ouvrir la fiche.</span>
+      <input type="text" id="m-q" placeholder="Aller à un lieu…" aria-label="Chercher un lieu sur la carte">
+      <button class="btn" id="m-go">Chercher</button>
+      <button class="btn" id="m-loc">Me localiser</button>
+    </div>
+    <div class="filters">
+      <div class="fg"><span class="fl">Afficher</span><div class="chips" id="m-filtre" data-value="tout"></div></div>
     </div>
     <div id="map"></div>
     <p class="maphint" id="maphint"></p>
@@ -267,7 +307,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
   </section>
 
   <footer class="foot">
-    Données entre les marqueurs <code>/*&#32;__DATA_DEBUT__&#32;*/</code> et <code>/*&#32;__DATA_FIN__&#32;*/</code>. Sans jeton, l'app est en lecture seule.
+    <span class="devise">Tenu au fil des tables, en Alsace et alentours.</span>
+    <span class="chiffres" id="foot-chiffres"></span>
   </footer>
 </div>
 
@@ -280,23 +321,21 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
         <label for="f-nom">Nom du restaurant</label>
         <input type="text" id="f-nom" autocomplete="off" required placeholder="Trois lettres suffisent pour chercher">
         <div class="ac" id="ac" hidden></div>
-        <span class="hint">Les suggestions viennent de la base des restaurants OpenStreetMap.</span>
+        <span class="hint">Suggestions OpenStreetMap : restaurants, hôtels-restaurants, auberges, bars et cafés.</span>
       </div>
       <div class="field"><label for="f-commune">Commune</label><input type="text" id="f-commune"></div>
       <div class="field"><label for="f-date">Date de la visite</label><input type="date" id="f-date"></div>
-      <div class="field"><label for="fr-style">Style</label><select id="fr-style"></select></div>
-      <div class="field"><label for="fr-gamme">Gamme de prix</label><select id="fr-gamme"></select></div>
-      <div class="field"><label for="fr-distinction">Distinction</label><select id="fr-distinction"></select></div>
+      <div class="field full"><span class="lbl">Style</span><div class="chips" id="fr-style" data-value=""></div></div>
+      <div class="field full"><span class="lbl">Distinction</span><div class="chips" id="fr-distinction" data-value=""></div></div>
+      <div class="field full"><span class="lbl">Gamme de prix</span><div class="chips" id="fr-gamme" data-value=""></div></div>
       <div class="field"><label for="f-format">Format</label>
         <select id="f-format"><option value="">—</option><option>Carte</option><option>Menu unique</option><option>Menu dégustation</option></select>
       </div>
       <div class="field"><label for="f-prix">Ticket par personne (€)</label><input type="number" id="f-prix" min="0" step="1"></div>
       <div class="field"><label for="f-note-in">Note globale sur 10</label><input type="number" id="f-note-in" min="0" max="10" step="1"></div>
-      <div class="field full"><label>Critères</label><div id="crits"></div></div>
+      <div class="field full"><span class="lbl">Critères</span><div class="crits-box" id="crits"></div></div>
       <div class="field full"><label for="f-com">Commentaire</label><textarea id="f-com" placeholder="Ce qui a marqué, en bien comme en mal."></textarea></div>
-      <div class="field full"><label for="f-statut">Statut</label>
-        <select id="f-statut"><option value="faite">Table faite</option><option value="afaire">À faire</option></select>
-      </div>
+      <div class="field full"><span class="lbl">Statut</span><div class="chips" id="f-statut" data-value="faite"></div></div>
     </div>
     <div class="actions">
       <button type="button" class="btn btn-quiet left" id="del" hidden>Supprimer</button>
@@ -998,7 +1037,7 @@ function setToken(t){
 const canEdit = () => !!TOKEN;
 
 let tab="faites", sortKey="note", sortDir=-1, editing=null, dirty=0, lastSync=null,
-    syncing=false, map=null, layer=null;
+    syncing=false, map=null, layer=null, moiMarker=null, centre={la:48.72,lo:7.62};
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
@@ -1084,23 +1123,50 @@ async function push(){
 }
 const touch = () => { dirty++; renderSync(); };
 
-/* ---------- menus ---------- */
-function fillSelects(){
-  const fill=(sel,arr,all)=>{
-    const el=$(sel), keep=el.value;
-    el.innerHTML = (all?`<option value="">${all}</option>`:"") + arr.map(v=>`<option>${esc(v)}</option>`).join("");
-    if([...el.options].some(o=>o.value===keep)) el.value=keep;
-  };
-  fill("#f-style",STYLES,"Tous styles");
-  fill("#fr-style",STYLES);
-  fill("#fr-gamme",GAMMES);
-  fill("#f-dist",DISTINCTIONS.filter(d=>d!=="—"),"Toutes distinctions");
-  fill("#fr-distinction",DISTINCTIONS);
+/* ---------- boutons de sélection ---------- */
+function chips(host, options, opts){
+  opts = opts || {};
+  const el = $(host);
+  if(opts.value!==undefined) el.dataset.value = opts.value;
+  const cur = el.dataset.value;
+  el.innerHTML = options.map(o=>{
+    const v = typeof o==="string" ? o : o.v;
+    const l = typeof o==="string" ? o : o.l;
+    return `<button type="button" data-v="${esc(v)}" aria-pressed="${String(v===cur)}"${opts.disabled?" disabled":""}>${esc(l)}</button>`;
+  }).join("");
 }
+const chipValue = host => $(host).dataset.value;
+function onChips(host, cb){
+  $(host).addEventListener("click", e=>{
+    const b=e.target.closest("button[data-v]"); if(!b || b.disabled) return;
+    $(host).dataset.value = b.dataset.v;
+    [...$(host).children].forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+    cb($(host).dataset.v);
+  });
+}
+
+/* ---------- filtres ---------- */
+function initFiltres(){
+  chips("#f-style", [{v:"",l:"Tous"}].concat(STYLES.map(x=>({v:x,l:x}))),
+        {value:chipValue("#f-style")||""});
+  chips("#f-dist", [{v:"",l:"Toutes"}]
+        .concat(DISTINCTIONS.filter(d=>d!=="—").map(d=>({v:d,l:d})))
+        .concat([{v:"—",l:"Sans distinction"}]),
+        {value:chipValue("#f-dist")||""});
+}
+function majBadge(){
+  const k = (chipValue("#f-style")?1:0) + (chipValue("#f-dist")?1:0);
+  $("#nfiltres").hidden = !k; $("#nfiltres").textContent = k;
+}
+$("#togfiltres").addEventListener("click", ()=>{
+  const ferme = $("#filters").hidden;
+  $("#filters").hidden = !ferme;
+  $("#togfiltres").setAttribute("aria-expanded", String(ferme));
+});
 
 /* ---------- liste ---------- */
 function visible(){
-  const q=$("#q").value.trim().toLowerCase(), fs=$("#f-style").value, fd=$("#f-dist").value;
+  const q=$("#q").value.trim().toLowerCase(), fs=chipValue("#f-style"), fd=chipValue("#f-dist");
   return RESTOS
     .filter(r => tab==="afaire" ? r.statut==="afaire" : r.statut==="faite")
     .filter(r => !q  || (r.nom+" "+r.commune).toLowerCase().includes(q))
@@ -1115,36 +1181,52 @@ function visible(){
       return typeof x==="string" ? x.localeCompare(y,"fr")*sortDir : (x-y)*sortDir;
     });
 }
-const sc = n => n==null?"s-lo":n>=9?"s-hi":n>=7?"s-mid":"s-lo";
+/* palier de la note : 4 niveaux, du plus affirmé au plus effacé */
+const sc = n => n==null ? "n0" : n>=9 ? "n4" : n>=7 ? "n3" : n>=5 ? "n2" : "n1";
 
 function updateCounts(){
-  $("#c-faites").textContent = RESTOS.filter(r=>r.statut==="faite").length;
-  $("#c-afaire").textContent = RESTOS.filter(r=>r.statut==="afaire").length;
+  const faites = RESTOS.filter(r=>r.statut==="faite");
+  const afaire = RESTOS.filter(r=>r.statut==="afaire");
+  $("#c-faites").textContent = faites.length;
+  $("#c-afaire").textContent = afaire.length;
+  const notes = faites.filter(r=>r.note!=null).map(r=>r.note);
+  const m = avg(notes);
+  $("#foot-chiffres").innerHTML =
+      "<b>"+faites.length+"</b> visitées · <b>"+afaire.length+"</b> en attente"
+    + (m!=null ? " · moyenne <b>"+m.toFixed(1).replace(".",",")+"</b>/10" : "");
 }
 function renderList(){
   const rows=visible();
   $("#list").innerHTML = rows.length ? rows.map(r=>`
     <button class="row" data-id="${r.id}">
       <span class="c-nom"><span class="name">${esc(r.nom)}</span><br><span class="place">${esc(r.commune)||"—"}${r.format?" · "+esc(r.format):""}</span></span>
-      <span class="c-style">${esc(r.style)}<span class="gamme">${esc(r.gamme)}</span></span>
+      <span class="c-style"><span class="tag">${esc(r.style)}</span><span class="gamme">${esc(r.gamme)}</span></span>
       <span class="c-dist ${r.distinction==="—"?"none":""}">${esc(r.distinction)}</span>
-      <span class="c-note ${sc(r.note)}">${r.note==null?"—":r.note}</span>
+      <span class="c-note"><span class="note ${sc(r.note)}" title="${r.note==null?"Non notée":r.note+" sur 10"}">${r.note==null?"—":r.note}</span></span>
     </button>`).join("")
     : `<div class="empty"><strong>Rien pour l'instant</strong>${tab==="afaire"?"Ajoutez les tables que vous voulez tester.":"Ajoutez votre première table."}</div>`;
   updateCounts();
-  $$(".head button").forEach(b=>b.classList.toggle("on", b.dataset.sort===sortKey));
+  $$(".head button").forEach(b=>{
+    const actif = b.dataset.sort===sortKey;
+    b.classList.toggle("on", actif);
+    if(actif) b.dataset.dir = sortDir>0 ? "asc" : "desc"; else b.removeAttribute("data-dir");
+  });
 }
 
 /* ---------- carte ---------- */
-function renderMap(){
+function initMap(){
+  if(map || typeof L==="undefined") return;
+  map = L.map("map",{scrollWheelZoom:false}).setView([centre.la,centre.lo],9);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(map);
+  layer = L.layerGroup().addTo(map);
+  map.on("moveend", ()=>{ const c=map.getCenter(); centre={la:c.lat, lo:c.lng}; });
+}
+function renderMap(cadrer){
+  if(cadrer===undefined) cadrer=true;
   if(typeof L==="undefined"){ $("#map").innerHTML='<div class="empty"><strong>Carte indisponible</strong>Leaflet ne s\'est pas chargé. Vérifiez la connexion.</div>'; return; }
-  if(!map){
-    map = L.map("map",{scrollWheelZoom:false}).setView([48.72,7.62],9);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(map);
-    layer = L.layerGroup().addTo(map);
-  }
+  initMap();
   layer.clearLayers();
-  const f=$("#m-filtre").value;
+  const f=chipValue("#m-filtre");
   const sel = RESTOS.filter(r => f==="tout"||r.statut===f);
   const pts = sel.filter(r=>r.la&&r.lo);
   pts.forEach(r=>{
@@ -1154,13 +1236,60 @@ function renderMap(){
       html:`<span class="b"><span class="n">${done?r.note:"·"}</span>${esc(r.nom)}</span>`});
     L.marker([r.la,r.lo],{icon,title:r.nom}).addTo(layer).on("click",()=>openSheet(r.id));
   });
-  if(pts.length) map.fitBounds(L.latLngBounds(pts.map(r=>[r.la,r.lo])).pad(.18),{maxZoom:13});
+  if(cadrer && pts.length) map.fitBounds(L.latLngBounds(pts.map(r=>[r.la,r.lo])).pad(.18),{maxZoom:13});
   const manque = sel.length - pts.length;
   $("#maphint").textContent = manque
     ? manque+" table"+(manque>1?"s":"")+" sans repère : la commune n'a pas encore pu être localisée."
     : "";
-  setTimeout(()=>map.invalidateSize(),60);
+  setTimeout(()=>{ if(map) map.invalidateSize(); },60);
 }
+function distance(la1,lo1,la2,lo2){
+  const R=6371, rad=x=>x*Math.PI/180;
+  const dLa=rad(la2-la1), dLo=rad(lo2-lo1);
+  const a=Math.sin(dLa/2)**2 + Math.cos(rad(la1))*Math.cos(rad(la2))*Math.sin(dLo/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+$("#m-loc").addEventListener("click", ()=>{
+  if(!navigator.geolocation){ $("#maphint").textContent="Ce navigateur ne sait pas vous localiser."; return; }
+  $("#maphint").textContent="Localisation en cours…";
+  navigator.geolocation.getCurrentPosition(
+    p=>{
+      initMap(); if(!map){ $("#maphint").textContent="Carte indisponible."; return; }
+      const la=p.coords.latitude, lo=p.coords.longitude;
+      if(moiMarker) map.removeLayer(moiMarker);
+      moiMarker = L.marker([la,lo],{zIndexOffset:1000, icon:L.divIcon({className:"pin moi",
+        iconSize:null, iconAnchor:[12,12],
+        html:'<span class="b"><span class="n">◉</span>Vous êtes ici</span>'})}).addTo(map);
+      map.setView([la,lo],12);
+      const proche = RESTOS.filter(r=>r.la&&r.lo)
+        .map(r=>({r, d:distance(la,lo,r.la,r.lo)})).sort((a,b)=>a.d-b.d)[0];
+      $("#maphint").textContent = proche
+        ? "Table la plus proche : "+proche.r.nom+", à "+proche.d.toFixed(1)+" km à vol d'oiseau."
+        : "Position trouvée.";
+    },
+    err=>{
+      $("#maphint").textContent = err.code===1
+        ? "Localisation refusée. Autorisez l'accès à la position dans les réglages du navigateur."
+        : "Localisation impossible pour le moment.";
+    },
+    {enableHighAccuracy:false, timeout:10000, maximumAge:300000}
+  );
+});
+async function allerA(){
+  const q=$("#m-q").value.trim();
+  if(!q) return;
+  $("#maphint").textContent="Recherche du lieu…";
+  try{
+    const f=(await photon(q,{tags:false,limit:1}))[0];
+    if(!f){ $("#maphint").textContent="Lieu introuvable."; return; }
+    initMap(); if(!map){ $("#maphint").textContent="Carte indisponible."; return; }
+    const co=f.geometry.coordinates, pr=f.properties;
+    map.setView([co[1],co[0]],13);
+    $("#maphint").textContent = "Vue centrée sur "+(pr.name||q)+(pr.city&&pr.city!==pr.name?", "+pr.city:"")+".";
+  }catch(e){ $("#maphint").textContent="Recherche indisponible."; }
+}
+$("#m-go").addEventListener("click", allerA);
+$("#m-q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); allerA(); } });
 
 /* ---------- podiums ---------- */
 function podium({titre, moyenne, unite, rows, total}){
@@ -1236,16 +1365,16 @@ $("#view-reglages").addEventListener("click", e=>{
   if(!canEdit()) return;
   if(e.target.id==="add-style"){
     const n=prompt("Nouveau style :");
-    if(n && n.trim() && !STYLES.includes(n.trim())){ STYLES.push(n.trim()); fillSelects(); renderReglages(); touch(); }
+    if(n && n.trim() && !STYLES.includes(n.trim())){ STYLES.push(n.trim()); initFiltres(); renderReglages(); touch(); }
     return;
   }
   const row=e.target.closest(".cfgrow"); if(!row) return;
   const i=+row.dataset.i;
   if(e.target.dataset.mv){
     const j=i+ +e.target.dataset.mv;
-    [STYLES[i],STYLES[j]]=[STYLES[j],STYLES[i]]; fillSelects(); renderReglages(); touch();
+    [STYLES[i],STYLES[j]]=[STYLES[j],STYLES[i]]; initFiltres(); renderReglages(); touch();
   } else if(e.target.dataset.rm){
-    STYLES.splice(i,1); fillSelects(); renderReglages(); touch();
+    STYLES.splice(i,1); initFiltres(); renderReglages(); touch();
   }
 });
 $("#view-reglages").addEventListener("change", e=>{
@@ -1256,7 +1385,7 @@ $("#view-reglages").addEventListener("change", e=>{
     if(!nv || nv===old || STYLES.includes(nv)){ renderReglages(); return; }
     STYLES[i]=nv;
     RESTOS.forEach(r=>{ if(r.style===old) r.style=nv; });
-    fillSelects(); renderReglages(); touch();
+    initFiltres(); renderReglages(); touch();
     return;
   }
   if(e.target.id==="cfg-user") CFG.user=e.target.value.trim();
@@ -1276,10 +1405,13 @@ function openSheet(id){
   $("#sheet-title").textContent = editing ? r.nom : "Nouvelle table";
   $("#ro-note").hidden = !ro;
   $("#f-nom").value=r.nom; $("#f-commune").value=r.commune; $("#f-date").value=r.date||"";
-  $("#fr-style").value=r.style; $("#fr-gamme").value=r.gamme;
-  $("#fr-distinction").value=r.distinction; $("#f-format").value=r.format||"";
+  $("#f-format").value=r.format||"";
   $("#f-prix").value=r.prix??""; $("#f-note-in").value=r.note??"";
-  $("#f-com").value=r.com||""; $("#f-statut").value=r.statut;
+  $("#f-com").value=r.com||"";
+  chips("#fr-style", STYLES.map(x=>({v:x,l:x})), {value:r.style, disabled:ro});
+  chips("#fr-distinction", DISTINCTIONS.map(d=>({v:d,l:d==="—"?"Aucune":d})), {value:r.distinction, disabled:ro});
+  chips("#fr-gamme", GAMMES.map(g=>({v:g,l:g==="—"?"N.C.":g})), {value:r.gamme, disabled:ro});
+  chips("#f-statut", [{v:"faite",l:"Table faite"},{v:"afaire",l:"À faire"}], {value:r.statut, disabled:ro});
   $("#crits").innerHTML = CRITERES.map(c=>`
     <div class="crit"><label>${c.l}</label>
       <span class="stars" data-c="${c.k}">${[1,2,3,4,5].map(n=>
@@ -1291,17 +1423,38 @@ function openSheet(id){
   $("#sheet").showModal();
 }
 $("#crits").addEventListener("click", e=>{
-  const b=e.target.closest("button[data-n]"); if(!b||!canEdit()) return;
-  [...b.parentNode.children].forEach(x=>x.classList.toggle("on", +x.dataset.n <= +b.dataset.n));
+  const b=e.target.closest("button[data-n]"); if(!b || b.disabled) return;
+  const freres=[...b.parentNode.children];
+  const actuel=freres.filter(x=>x.classList.contains("on")).length;
+  const seuil = (actuel===+b.dataset.n) ? 0 : +b.dataset.n;   // recliquer la même étoile efface
+  freres.forEach(x=>x.classList.toggle("on", +x.dataset.n <= seuil));
 });
 
 /* ---------- autocomplétion restaurants (Photon / OpenStreetMap) ---------- */
 let acT=null, acCoords={la:null,lo:null};
-async function photon(q, restaurantsOnly){
-  const tags = restaurantsOnly ? "&osm_tag=amenity:restaurant&osm_tag=amenity:cafe&osm_tag=amenity:pub" : "";
-  const r = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=48.7&lon=7.7&zoom=11&limit=6${tags}`);
+const TAGS = ["amenity:restaurant","amenity:cafe","amenity:pub","amenity:bar","amenity:fast_food",
+              "amenity:biergarten","tourism:hotel","tourism:guest_house"];
+const LIBELLE = {restaurant:"restaurant",cafe:"café",pub:"pub",bar:"bar",fast_food:"snack",
+                 biergarten:"brasserie",hotel:"hôtel",guest_house:"auberge"};
+async function photon(q,opts){
+  opts = opts || {};
+  const tags = opts.tags===false ? "" : "&"+TAGS.map(x=>"osm_tag="+x).join("&");
+  const limit = opts.limit || 8;
+  const r = await fetch("https://photon.komoot.io/api/?q="+encodeURIComponent(q)
+    + "&lang=fr&lat="+centre.la+"&lon="+centre.lo+"&zoom=12&limit="+limit+tags);
   if(!r.ok) throw new Error("photon");
   return (await r.json()).features || [];
+}
+function fusionner(a,b){
+  const vus=new Set(), out=[];
+  for(const f of a.concat(b)){
+    const pr=f.properties;
+    if(!pr.name) continue;
+    const cle = pr.name.toLowerCase()+"|"+f.geometry.coordinates.map(c=>c.toFixed(3)).join(",");
+    if(vus.has(cle)) continue;
+    vus.add(cle); out.push(f);
+  }
+  return out.slice(0,9);
 }
 $("#f-nom").addEventListener("input", ()=>{
   clearTimeout(acT);
@@ -1311,14 +1464,20 @@ $("#f-nom").addEventListener("input", ()=>{
   $("#ac").innerHTML='<div class="st">Recherche…</div>'; $("#ac").hidden=false;
   acT=setTimeout(async ()=>{
     try{
-      let items = await photon(q,true);
-      if(!items.length) items = await photon(q,false);
-      items = items.filter(f=>f.properties.name);
+      // deux requêtes en parallèle : l'index restauration et l'index général,
+      // puis fusion — beaucoup de maisons ne portent pas le tag « restaurant » dans OSM.
+      const res = await Promise.all([
+        photon(q,{tags:true, limit:8}).catch(()=>[]),
+        photon(q,{tags:false,limit:6}).catch(()=>[])
+      ]);
+      const items = fusionner(res[0],res[1]);
       if(!items.length){ $("#ac").innerHTML='<div class="st">Aucun résultat. Saisissez le nom et la commune à la main.</div>'; return; }
       $("#ac")._items=items;
       $("#ac").innerHTML = items.map((f,i)=>{
-        const p=f.properties;
-        return `<button type="button" data-i="${i}">${esc(p.name)}<small>${esc([p.street,p.city||p.county,p.postcode].filter(Boolean).join(", "))}</small></button>`;
+        const pr=f.properties;
+        const kind = LIBELLE[pr.osm_value] || "";
+        const adr = [pr.street,pr.city||pr.county,pr.postcode].filter(Boolean).join(", ");
+        return `<button type="button" data-i="${i}">${kind?`<span class="kind">${kind}</span>`:""}${esc(pr.name)}<small>${esc(adr||"—")}</small></button>`;
       }).join("");
     }catch(e){ $("#ac").innerHTML='<div class="st">Recherche indisponible. Saisissez le nom et la commune à la main.</div>'; }
   },320);
@@ -1337,7 +1496,7 @@ document.addEventListener("click", e=>{
 async function localiser(commune){
   if(!commune) return null;
   try{
-    const f = (await photon(commune+", Alsace", false))[0];
+    const f = (await photon(commune+", Alsace", {tags:false,limit:1}))[0];
     return f ? {la:+f.geometry.coordinates[1].toFixed(5), lo:+f.geometry.coordinates[0].toFixed(5)} : null;
   }catch(e){ return null; }
 }
@@ -1349,10 +1508,10 @@ $("#form").addEventListener("submit", async e=>{
   $$("#crits .stars").forEach(s=>{ const n=[...s.children].filter(b=>b.classList.contains("on")).length; if(n) crit[s.dataset.c]=n; });
   const data={
     nom:$("#f-nom").value.trim(), commune:$("#f-commune").value.trim(),
-    style:$("#fr-style").value, gamme:$("#fr-gamme").value,
-    distinction:$("#fr-distinction").value, note:$("#f-note-in").value===""?null:+$("#f-note-in").value,
+    style:chipValue("#fr-style"), gamme:chipValue("#fr-gamme"),
+    distinction:chipValue("#fr-distinction"), note:$("#f-note-in").value===""?null:+$("#f-note-in").value,
     date:$("#f-date").value, prix:$("#f-prix").value===""?null:+$("#f-prix").value,
-    format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:$("#f-statut").value
+    format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:chipValue("#f-statut")
   };
   const btn=$("#save"); btn.disabled=true; btn.textContent="Enregistrement…";
   let cible;
@@ -1401,8 +1560,7 @@ $$(".head button").forEach(b=>b.addEventListener("click", ()=>{
   renderList();
 }));
 $("#list").addEventListener("click", e=>{ const r=e.target.closest(".row"); if(r) openSheet(+r.dataset.id); });
-$("#m-filtre").addEventListener("change", renderMap);
-["#q","#f-style","#f-dist"].forEach(s=>$(s).addEventListener("input", renderList));
+$("#q").addEventListener("input", renderList);
 $("#add").addEventListener("click", ()=>openSheet(null));
 document.addEventListener("keydown", e=>{
   if(e.key==="n" && canEdit() && !/input|textarea|select/i.test(e.target.tagName) && !$("#sheet").open){
@@ -1419,7 +1577,18 @@ function render(){
   else if(tab==="reglages") renderReglages();
   else renderList();
 }
-fillSelects(); render();
+initFiltres();
+chips("#m-filtre", [{v:"tout",l:"Toutes"},{v:"faite",l:"Faites"},{v:"afaire",l:"À faire"}], {value:"tout"});
+onChips("#f-style", ()=>{ majBadge(); renderList(); });
+onChips("#f-dist",  ()=>{ majBadge(); renderList(); });
+onChips("#m-filtre", ()=>renderMap(true));
+["#fr-style","#fr-distinction","#fr-gamme","#f-statut"].forEach(h=>onChips(h, ()=>{}));
+majBadge();
+if(window.matchMedia && window.matchMedia("(max-width:700px)").matches){
+  $("#filters").hidden = true;
+  $("#togfiltres").setAttribute("aria-expanded","false");
+}
+render();
 </script>
 </body>
 </html>
