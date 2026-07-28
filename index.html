@@ -18,7 +18,8 @@
 <style>
 :root{
   --ground:#E7E8E1; --card:#F5F5F0; --ink:#191D23; --soft:#5A6068;
-  --line:#CDCEC5; --garnet:#6E2038; --sage:#6B7A62; --brass:#A4863C; --r:3px;
+  --line:#CDCEC5; --garnet:#6E2038; --sage:#6B7A62; --brass:#A4863C;
+  --violette:#6A4C86; --r:3px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -78,6 +79,12 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .row:hover{background:rgba(110,32,56,.045);box-shadow:inset 3px 0 0 var(--garnet)}
 .row .name{font-weight:600;letter-spacing:-.012em;font-size:15.5px;line-height:1.3}
 .row .place{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 14,"wght" 300;font-style:italic;font-size:13px;color:var(--soft);line-height:1.45}
+.vio{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
+  background:var(--violette);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:9.5px;font-weight:500;
+  line-height:1;letter-spacing:0;margin-left:7px;vertical-align:1px;flex:0 0 auto}
+.pin .vio{width:13px;height:13px;font-size:8.5px;margin-left:5px;vertical-align:0}
+.pin.vio .b{border-color:var(--violette)}
+.top .vio{margin-left:5px}
 .head{padding:0 4px 8px;border-bottom:1px solid var(--ink);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
 .head button{background:none;border:0;padding:0;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;text-align:left}
 .head button:last-child{text-align:right}
@@ -238,6 +245,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
     <div class="filters" id="filters">
       <div class="fg"><span class="fl">Style</span><div class="chips" id="f-style" data-value=""></div></div>
       <div class="fg"><span class="fl">Distinction</span><div class="chips" id="f-dist" data-value=""></div></div>
+      <div class="fg"><span class="fl">Violette</span><div class="chips" id="f-vio" data-value=""></div></div>
     </div>
     <div class="head">
       <button data-sort="nom">Table</button>
@@ -334,6 +342,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
       <div class="field"><label for="f-prix">Ticket par personne (€)</label><input type="number" id="f-prix" min="0" step="1"></div>
       <div class="field"><label for="f-note-in">Note globale sur 10</label><input type="number" id="f-note-in" min="0" max="10" step="1"></div>
       <div class="field full"><span class="lbl">Critères</span><div class="crits-box" id="crits"></div></div>
+      <div class="field full"><span class="lbl">Bonus violette</span><div class="chips" id="fr-violette" data-value=""></div>
+        <span class="hint">Les tables particulièrement appréciées par Violette.</span></div>
       <div class="field full"><label for="f-com">Commentaire</label><textarea id="f-com" placeholder="Ce qui a marqué, en bien comme en mal."></textarea></div>
       <div class="field full"><span class="lbl">Statut</span><div class="chips" id="f-statut" data-value="faite"></div></div>
     </div>
@@ -1604,9 +1614,11 @@ function initFiltres(){
         .concat(DISTINCTIONS.filter(d=>d!=="—").map(d=>({v:d,l:d})))
         .concat([{v:"—",l:"Sans distinction"}]),
         {value:chipValue("#f-dist")||""});
+  chips("#f-vio", [{v:"",l:"Toutes"},{v:"1",l:"Bonus violette"}],
+        {value:chipValue("#f-vio")||""});
 }
 function majBadge(){
-  const k = (chipValue("#f-style")?1:0) + (chipValue("#f-dist")?1:0);
+  const k = (chipValue("#f-style")?1:0) + (chipValue("#f-dist")?1:0) + (chipValue("#f-vio")?1:0);
   $("#nfiltres").hidden = !k; $("#nfiltres").textContent = k;
 }
 $("#togfiltres").addEventListener("click", ()=>{
@@ -1617,12 +1629,13 @@ $("#togfiltres").addEventListener("click", ()=>{
 
 /* ---------- liste ---------- */
 function visible(){
-  const q=$("#q").value.trim().toLowerCase(), fs=chipValue("#f-style"), fd=chipValue("#f-dist");
+  const q=$("#q").value.trim().toLowerCase(), fs=chipValue("#f-style"), fd=chipValue("#f-dist"), fv=chipValue("#f-vio");
   return RESTOS
     .filter(r => tab==="afaire" ? r.statut==="afaire" : r.statut==="faite")
     .filter(r => !q  || (r.nom+" "+r.commune).toLowerCase().includes(q))
     .filter(r => !fs || r.style===fs)
     .filter(r => !fd || r.distinction===fd)
+    .filter(r => !fv || !!r.violette)
     .sort((a,b)=>{
       let x=a[sortKey], y=b[sortKey];
       if(sortKey==="distinction"){ x=RANG[x]??0; y=RANG[y]??0; }
@@ -1632,6 +1645,9 @@ function visible(){
       return typeof x==="string" ? x.localeCompare(y,"fr")*sortDir : (x-y)*sortDir;
     });
 }
+/* bonus violette : pastille discrète, tables particulièrement appréciées par Violette */
+const VIO = r => r.violette ? '<span class="vio" title="Bonus violette" aria-label="Bonus violette">v</span>' : "";
+
 /* palier de la note : 4 niveaux, du plus affirmé au plus effacé */
 const sc = n => n==null ? "n0" : n>=9 ? "n4" : n>=7 ? "n3" : n>=5 ? "n2" : "n1";
 
@@ -1650,7 +1666,7 @@ function renderList(){
   const rows=visible();
   $("#list").innerHTML = rows.length ? rows.map(r=>`
     <button class="row" data-id="${r.id}">
-      <span class="c-nom"><span class="name">${esc(r.nom)}</span><br><span class="place">${esc(r.commune)||"—"}${r.format?" · "+esc(r.format):""}</span></span>
+      <span class="c-nom"><span class="name">${esc(r.nom)}${VIO(r)}</span><br><span class="place">${esc(r.commune)||"—"}${r.format?" · "+esc(r.format):""}</span></span>
       <span class="c-style"><span class="tag">${esc(r.style)}</span><span class="gamme">${esc(r.gamme)}</span></span>
       <span class="c-dist ${r.distinction==="—"?"none":""}">${esc(r.distinction)}</span>
       <span class="c-note"><span class="note ${sc(r.note)}" title="${r.note==null?"Non notée":r.note+" sur 10"}">${r.note==null?"—":r.note}</span></span>
@@ -1682,9 +1698,9 @@ function renderMap(cadrer){
   const pts = sel.filter(r=>r.la&&r.lo);
   pts.forEach(r=>{
     const done = r.statut==="faite" && r.note!=null;
-    const cls  = !done ? "todo" : r.note>=9 ? "" : r.note>=7 ? "mid" : "lo";
+    const cls  = (!done ? "todo" : r.note>=9 ? "" : r.note>=7 ? "mid" : "lo") + (r.violette ? " vio" : "");
     const icon = L.divIcon({className:"pin "+cls, iconSize:null, iconAnchor:[12,12],
-      html:`<span class="b"><span class="n">${done?r.note:"·"}</span>${esc(r.nom)}</span>`});
+      html:`<span class="b"><span class="n">${done?r.note:"·"}</span>${esc(r.nom)}${VIO(r)}</span>`});
     L.marker([r.la,r.lo],{icon,title:r.nom}).addTo(layer).on("click",()=>openSheet(r.id));
   });
   if(cadrer && pts.length) map.fitBounds(L.latLngBounds(pts.map(r=>[r.la,r.lo])).pad(.18),{maxZoom:13});
@@ -1773,13 +1789,16 @@ function renderPodiums(){
 function renderStats(){
   const done = RESTOS.filter(r=>r.statut==="faite" && r.note!=null);
   const moy = avg(done.map(r=>r.note));
+  const vio = RESTOS.filter(r=>r.violette);
+  const vioMoy = avg(vio.filter(r=>r.note!=null).map(r=>r.note));
   const best = STYLES.map(s=>({s,n:done.filter(r=>r.style===s).length,m:avg(done.filter(r=>r.style===s).map(r=>r.note))}))
                      .filter(x=>x.n).sort((a,b)=>b.m-a.m)[0];
   $("#kpis").innerHTML = `
     <div class="kpi"><div class="k">Tables faites</div><div class="v">${done.length}</div></div>
     <div class="kpi"><div class="k">Note moyenne</div><div class="v">${moy!=null?moy.toFixed(1):"—"}<small> / 10</small></div></div>
     <div class="kpi"><div class="k">Style préféré</div><div class="v sm">${best?esc(best.s):"—"}</div></div>
-    <div class="kpi"><div class="k">À faire</div><div class="v">${RESTOS.filter(r=>r.statut==="afaire").length}</div></div>`;
+    <div class="kpi"><div class="k">À faire</div><div class="v">${RESTOS.filter(r=>r.statut==="afaire").length}</div></div>
+    <div class="kpi"><div class="k">Bonus violette</div><div class="v">${vio.length}${vioMoy!=null?`<small> · ${vioMoy.toFixed(1)}/10</small>`:""}</div></div>`;
 
   const W=720,H=330,Lm=64,Rm=24,T=20,B=52;
   const px=v=>Lm+v/4*(W-Lm-Rm), py=v=>T+(10-v)/10*(H-T-B);
@@ -1795,7 +1814,7 @@ function renderStats(){
   renderPodiums();
 
   $("#topfive").innerHTML = done.slice().sort((a,b)=>b.note-a.note).slice(0,5).map((r,i)=>`
-    <div><span class="r">${i+1}</span><span class="t">${esc(r.nom)} <span style="color:var(--soft)">· ${esc(r.commune)}</span></span><span class="v">${r.note}</span></div>`).join("");
+    <div><span class="r">${i+1}</span><span class="t">${esc(r.nom)}${VIO(r)} <span style="color:var(--soft)">· ${esc(r.commune)}</span></span><span class="v">${r.note}</span></div>`).join("");
 }
 
 /* ---------- réglages ---------- */
@@ -1863,6 +1882,7 @@ function openSheet(id){
   chips("#fr-distinction", DISTINCTIONS.map(d=>({v:d,l:d==="—"?"Aucune":d})), {value:r.distinction, disabled:ro});
   chips("#fr-gamme", GAMMES.map(g=>({v:g,l:g==="—"?"N.C.":g})), {value:r.gamme, disabled:ro});
   chips("#f-statut", [{v:"faite",l:"Table faite"},{v:"afaire",l:"À faire"}], {value:r.statut, disabled:ro});
+  chips("#fr-violette", [{v:"",l:"Non"},{v:"1",l:"Oui"}], {value:r.violette?"1":"", disabled:ro});
   $("#crits").innerHTML = CRITERES.map(c=>`
     <div class="crit"><label>${c.l}</label>
       <span class="stars" data-c="${c.k}">${[1,2,3,4,5].map(n=>
@@ -1962,12 +1982,14 @@ $("#form").addEventListener("submit", async e=>{
     style:chipValue("#fr-style"), gamme:chipValue("#fr-gamme"),
     distinction:chipValue("#fr-distinction"), note:$("#f-note-in").value===""?null:+$("#f-note-in").value,
     date:$("#f-date").value, prix:$("#f-prix").value===""?null:+$("#f-prix").value,
-    format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:chipValue("#f-statut")
+    format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:chipValue("#f-statut"),
+    violette: chipValue("#fr-violette")==="1"
   };
   const btn=$("#save"); btn.disabled=true; btn.textContent="Enregistrement…";
   let cible;
   if(editing){ Object.assign(editing,data); cible=editing; }
   else { cible={id:Math.max(0,...RESTOS.map(r=>r.id))+1, la:null, lo:null, ...data}; RESTOS.push(cible); }
+  if(!cible.violette) delete cible.violette;   // on ne stocke le bonus que lorsqu'il est actif
   if(acCoords.la){ cible.la=acCoords.la; cible.lo=acCoords.lo; }
   if(!cible.la && cible.commune){
     const c = await localiser(cible.commune);
@@ -1985,8 +2007,9 @@ $("#del").addEventListener("click", ()=>{
 });
 
 $("#csv").addEventListener("click", ()=>{
-  const cols=["nom","commune","style","gamme","distinction","note","date","prix","format","statut","com"];
-  const ligne = r => cols.map(c=>`"${String(r[c]??"").replace(/"/g,'""')}"`).join(";");
+  const cols=["nom","commune","style","gamme","distinction","note","violette","date","prix","format","statut","com"];
+  const cell = (r,c) => c==="violette" ? (r.violette?"oui":"") : (r[c]??"");
+  const ligne = r => cols.map(c=>`"${String(cell(r,c)).replace(/"/g,'""')}"`).join(";");
   const csv=[cols.join(";")].concat(RESTOS.map(ligne)).join("\r\n");
   const a=document.createElement("a");
   a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
@@ -2032,8 +2055,9 @@ initFiltres();
 chips("#m-filtre", [{v:"tout",l:"Toutes"},{v:"faite",l:"Faites"},{v:"afaire",l:"À faire"}], {value:"tout"});
 onChips("#f-style", ()=>{ majBadge(); renderList(); });
 onChips("#f-dist",  ()=>{ majBadge(); renderList(); });
+onChips("#f-vio",   ()=>{ majBadge(); renderList(); });
 onChips("#m-filtre", ()=>renderMap(true));
-["#fr-style","#fr-distinction","#fr-gamme","#f-statut"].forEach(h=>onChips(h, ()=>{}));
+["#fr-style","#fr-distinction","#fr-gamme","#f-statut","#fr-violette"].forEach(h=>onChips(h, ()=>{}));
 majBadge();
 if(window.matchMedia && window.matchMedia("(max-width:700px)").matches){
   $("#filters").hidden = true;
