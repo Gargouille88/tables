@@ -317,7 +317,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
 
     <section class="boussole" id="boussole" hidden>
       <h2>On va où ?</h2>
-      <p class="sub">Parmi les tables à faire, celles qui tiennent dans le rayon choisi, classées par envie puis par distance. Le point de départ se règle dans Réglages.</p>
+      <p class="sub">Trois angles complémentaires parmi les tables à faire : une proche, une tentante, une qui sort de vos habitudes. Recliquez pour d'autres suggestions. Le point de départ se règle dans Réglages.</p>
       <div class="filters">
         <div class="fg"><span class="fl">Rayon</span><div class="chips" id="b-rayon" data-value="30"></div></div>
         <div class="fg"><span class="fl">Gamme</span><div class="chips" id="b-gamme" data-value=""></div></div>
@@ -1928,14 +1928,61 @@ function aucunCandidat(){
   $("#b-props").innerHTML = "";
   $("#b-hint").textContent = "Aucune table à faire ne correspond. Élargissez le rayon, ou baissez l'exigence d'envie.";
 }
+/* Un tri déterministe sur envie puis distance sort toujours le même trio, et à envies
+   égales il se réduit aux trois plus proches — souvent trois tables du même style.
+   On propose donc trois angles complémentaires ; dans chacun on tire au sort à
+   l'intérieur du tiers de tête, ce qui varie d'un clic à l'autre sans jamais
+   proposer n'importe quoi.                                                        */
+let dernieres = [];
+
+function freqStyles(){
+  const f = {};
+  RESTOS.filter(r=>r.statut==="faite").forEach(r=>{ f[r.style]=(f[r.style]||0)+1; });
+  return f;
+}
+const tiersDeTete = liste => liste.slice(0, Math.max(1, Math.ceil(liste.length/3)));
+const tirer = liste => liste[Math.floor(Math.random()*liste.length)];
+
 function proposer(){
-  const c = candidats().sort((a,b)=> b.e-a.e || (a.d ?? Infinity)-(b.d ?? Infinity));
-  if(!c.length) return aucunCandidat();
-  const rangs = ["Le meilleur choix","Deuxième","Troisième"];
-  $("#b-props").innerHTML = c.slice(0,3).map((x,i)=>carteProp(x, rangs[i])).join("");
-  const ray=chipValue("#b-rayon");
-  $("#b-hint").textContent = c.length+" table"+(c.length>1?"s":"")+" retenue"+(c.length>1?"s":"")
-    + (ray ? " dans "+ray+" km" : "") + " au départ de "+(baseCoord().nom||"votre point de départ")+".";
+  const tous = candidats();
+  if(!tous.length) return aucunCandidat();
+  /* on écarte le tirage précédent tant qu'il reste de quoi composer un trio */
+  const frais = tous.filter(x=>!dernieres.includes(x.r.id));
+  const pool  = frais.length >= Math.min(3, tous.length) ? frais : tous;
+  const freq  = freqStyles();
+
+  const pris = new Set();
+  /* le tiers de tête est calculé sur ce qui reste disponible : sans cela le
+     dernier angle héritait des restes et ne tenait plus sa promesse. */
+  const choisir = trie => {
+    const dispo = trie.filter(x=>!pris.has(x.r.id));
+    if(!dispo.length) return null;
+    const x = tirer(tiersDeTete(dispo));
+    pris.add(x.r.id);
+    return x;
+  };
+
+  const parDistance = pool.filter(x=>x.d!=null).sort((a,b)=>a.d-b.d);
+  const parEnvie    = pool.slice().sort((a,b)=> b.e-a.e || RANG[b.r.distinction]-RANG[a.r.distinction]);
+  const parRarete   = pool.slice().sort((a,b)=> (freq[a.r.style]||0)-(freq[b.r.style]||0));
+
+  const lots = [
+    {l:"À deux pas",       x:choisir(parDistance.length?parDistance:pool)},
+    {l:"La plus tentante", x:choisir(parEnvie)},
+    {l:"Pour changer",     x:choisir(parRarete)}
+  ].filter(o=>o.x);
+  /* si un angle n'avait plus rien de distinct à offrir, on complète le trio */
+  while(lots.length < Math.min(3, pool.length)){
+    const x = choisir(pool); if(!x) break;
+    lots.push({l:"Et pourquoi pas", x});
+  }
+
+  dernieres = lots.map(o=>o.x.r.id);
+  $("#b-props").innerHTML = lots.map(o=>carteProp(o.x, o.l)).join("");
+  const ray = chipValue("#b-rayon");
+  $("#b-hint").textContent = tous.length+" table"+(tous.length>1?"s":"")+" éligible"+(tous.length>1?"s":"")
+    + (ray ? " dans "+ray+" km" : "") + " au départ de "+(baseCoord().nom||"votre point de départ")
+    + (tous.length>3 ? ". Recliquez pour d'autres suggestions." : ".");
 }
 function auHasard(){
   const c = candidats();
