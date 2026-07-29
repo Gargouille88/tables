@@ -204,6 +204,17 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .relance .t b{font-weight:600;letter-spacing:-.012em}
 .relance .t small{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);margin-top:2px}
 
+/* historique des passages */
+.bandeau{margin:0 0 16px;padding:10px 13px;background:rgba(164,134,60,.09);border-left:3px solid var(--brass);font-size:12.5px;color:var(--ink)}
+#histo-plot{width:100%;height:auto;display:block;background:var(--ground);border:1px solid var(--line);margin-bottom:10px}
+.visites{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.visite{display:flex;align-items:center;gap:11px;padding:8px 2px;border-bottom:1px solid var(--line)}
+.visite:last-child{border-bottom:0}
+.visite .t{flex:1;min-width:0}
+.visite .t b{font-weight:600;font-size:13.5px}
+.visite .t small{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);margin-top:1px}
+.visite .note{min-width:38px;height:27px;font-size:13.5px}
+
 /* aides de saisie de la fiche */
 .assist{display:block}
 .assist b{font-weight:600;color:var(--ink)}
@@ -433,6 +444,7 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
   <form method="dialog" class="sheet" id="form">
     <h3 id="sheet-title">Nouvelle table</h3>
     <div class="ro-note" id="ro-note" hidden>Lecture seule. Connectez un jeton GitHub pour modifier cette fiche.</div>
+    <p class="bandeau" id="bandeau-visite" hidden>Vous ajoutez un passage. Les informations de la table ne changent pas : seuls la date, le ticket, la note et les critères de ce repas sont enregistrés. La note affichée dans la liste devient celle du passage le plus récent.</p>
     <div class="grid">
       <div class="field full">
         <label for="f-nom">Nom du restaurant</label>
@@ -459,9 +471,15 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
       <div class="field full"><span class="lbl">Statut</span><div class="chips" id="f-statut" data-value="faite"></div></div>
       <div class="field full" id="champ-envie" hidden><span class="lbl">Envie d'y aller</span><div class="chips" id="fr-envie" data-value="2"></div>
         <span class="hint">Sert à classer les propositions du sélecteur « On va où ? ».</span></div>
+      <div class="field full" id="histo" hidden>
+        <span class="lbl">Historique des passages</span>
+        <svg id="histo-plot" viewBox="0 0 560 150" hidden></svg>
+        <div class="visites" id="histo-liste"></div>
+      </div>
     </div>
     <div class="actions">
       <button type="button" class="btn btn-quiet left" id="del" hidden>Supprimer</button>
+      <button type="button" class="btn" id="add-visite" hidden>Ajouter un passage</button>
       <button type="button" class="btn" id="cancel">Fermer</button>
       <button type="submit" class="btn btn-solid" id="save">Enregistrer</button>
     </div>
@@ -513,7 +531,7 @@ let RESTOS = [
   "date": "",
   "prix": 300,
   "format": "Menu dégustation",
-  "com": "Anguille inoubliable",
+  "com": "",
   "crit": {
    "cuisine": 5,
    "cadre": 3,
@@ -536,10 +554,10 @@ let RESTOS = [
   "date": "",
   "prix": 300,
   "format": "Menu dégustation",
-  "com": "Cave hors norme. Menu anniversaire incroyable. Service parfait.",
+  "com": "Cave hors norme",
   "crit": {
    "cuisine": 5,
-   "cadre": 5,
+   "cadre": 4,
    "service": 5,
    "qp": 3
   },
@@ -1649,28 +1667,6 @@ let RESTOS = [
    "qp": 4
   },
   "statut": "faite"
- },
- {
-  "id": 58,
-  "la": 48.7558,
-  "lo": 7.71556,
-  "nom": "Im Buerehoft",
-  "commune": "Rottelsheim",
-  "style": "Alsacien",
-  "gamme": "€€",
-  "distinction": "—",
-  "note": 6,
-  "date": "2026-07-29",
-  "prix": 40,
-  "format": "Carte",
-  "com": "",
-  "crit": {
-   "cuisine": 3,
-   "cadre": 3,
-   "service": 2,
-   "qp": 2
-  },
-  "statut": "faite"
  }
 ];
 /* __DATA_FIN__ */
@@ -2387,6 +2383,125 @@ $("#f-note-in").addEventListener("input", ()=>{ noteManuelle=true; majAssistNote
 $("#f-prix").addEventListener("input", majAssistGamme);
 function majChampEnvie(){ $("#champ-envie").hidden = chipValue("#f-statut")!=="afaire"; }
 
+/* ---------- passages ----------
+   Une table peut avoir été visitée plusieurs fois. La source de vérité est
+   r.visites[] dès qu'il y a au moins deux passages ; les champs plats (date,
+   note, prix, format, com, crit) reflètent toujours le passage le plus récent.
+   La liste, la carte, les statistiques et l'export continuent donc de lire les
+   mêmes champs qu'avant, et les fiches à un seul passage restent au format plat. */
+const CHAMPS_VISITE = ["date","note","prix","format","com","crit"];
+const jourFr = d => d ? d.split("-").reverse().join("/") : "";
+const moisFr = d => d ? d.slice(0,7).split("-").reverse().join("/") : "";
+
+function visitesDe(r){
+  if(Array.isArray(r.visites) && r.visites.length) return r.visites;
+  if(r.statut!=="faite" && !r.date && r.note==null) return [];
+  const seule = {};
+  CHAMPS_VISITE.forEach(c=>{ if(r[c]!=null && r[c]!=="") seule[c]=r[c]; });
+  return [seule];
+}
+const trierVisites = v => v.slice().sort((a,b)=>
+  (b.date ? Date.parse(b.date) : -Infinity) - (a.date ? Date.parse(a.date) : -Infinity));
+
+/* recopie le passage le plus récent sur les champs plats, puis repasse au
+   format plat s'il ne reste qu'un seul passage */
+function projeter(r){
+  if(!Array.isArray(r.visites) || !r.visites.length){ delete r.visites; return; }
+  r.visites = trierVisites(r.visites);
+  const d = r.visites[0];
+  r.date = d.date || "";
+  r.note = d.note ?? null;
+  r.prix = d.prix ?? null;
+  r.format = d.format || "";
+  r.com = d.com || "";
+  r.crit = d.crit || {};
+  if(r.visites.length===1) delete r.visites;
+}
+function ajouterVisite(r, v){
+  r.visites = visitesDe(r).concat([v]);
+  projeter(r);
+}
+
+function plotVisites(v){
+  const svg = $("#histo-plot");
+  const pts = v.filter(x=>x.date && x.note!=null)
+    .map(x=>({t:Date.parse(x.date), n:x.note, p:x.prix, d:x.date}))
+    .filter(x=>!isNaN(x.t)).sort((a,b)=>a.t-b.t);
+  if(pts.length<2){ svg.hidden=true; return; }
+  svg.hidden=false;
+  const W=560,H=150,L=28,R=14,T=20,B=28;
+  const t0=pts[0].t, t1=pts[pts.length-1].t;
+  const px = t => t1===t0 ? (L+W-R)/2 : L+(t-t0)/(t1-t0)*(W-L-R);
+  const py = n => T+(10-n)/10*(H-T-B);
+  let g="";
+  for(let n=0;n<=10;n+=5)
+    g += `<line x1="${L}" y1="${py(n)}" x2="${W-R}" y2="${py(n)}" stroke="#CDCEC5" stroke-width="1"/>`
+       + `<text x="${L-5}" y="${py(n)+4}" text-anchor="end" font-family="IBM Plex Mono" font-size="10" fill="#5A6068">${n}</text>`;
+  g += `<polyline fill="none" stroke="#6E2038" stroke-width="1.6" points="${pts.map(x=>px(x.t)+","+py(x.n)).join(" ")}"/>`;
+  pts.forEach((x,i)=>{
+    g += `<circle cx="${px(x.t)}" cy="${py(x.n)}" r="4.5" fill="#6E2038"/>`
+       + `<text x="${px(x.t)}" y="${py(x.n)-10}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#191D23">${x.n}</text>`;
+    if(i===0 || i===pts.length-1)
+      g += `<text x="${px(x.t)}" y="${H-9}" text-anchor="${i===0?"start":"end"}" font-family="IBM Plex Mono" font-size="10" fill="#5A6068">${moisFr(x.d)}</text>`;
+  });
+  svg.innerHTML = g;
+}
+
+function renderHisto(){
+  const box = $("#histo");
+  if(!editing){ box.hidden=true; return; }
+  const v = trierVisites(visitesDe(editing));
+  if(!v.length){ box.hidden=true; return; }
+  box.hidden=false;
+  const multiple = v.length>1;
+  $("#histo-liste").innerHTML = v.map((x,i)=>{
+    const detail = [x.format, x.prix?x.prix+" €":null].filter(Boolean).join(" · ") || "pas de détail";
+    return `<div class="visite">
+      <span class="note ${sc(x.note)}">${x.note==null?"—":x.note}</span>
+      <span class="t"><b>${x.date?jourFr(x.date):"date non renseignée"}</b><small>${esc(detail)}</small></span>
+      ${(canEdit() && multiple) ? `<button type="button" class="btn btn-quiet btn-sm" data-vis="${i}">Retirer</button>` : ""}
+    </div>`;
+  }).join("");
+  plotVisites(v);
+}
+$("#histo-liste").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-vis]");
+  if(!b || !editing || !canEdit()) return;
+  const v = trierVisites(visitesDe(editing));
+  if(v.length<2) return;
+  v.splice(+b.dataset.vis, 1);
+  editing.visites = v;
+  projeter(editing);
+  touch(); renderList();
+  openSheet(editing.id);   // recharge la fiche : les champs plats viennent de changer
+});
+
+/* ---------- mode « nouveau passage » ---------- */
+let modeVisite = false;
+function majModeVisite(){
+  const ro = !canEdit(), m = modeVisite;
+  $("#bandeau-visite").hidden = !m;
+  $("#add-visite").hidden = m || ro || !editing;
+  $("#del").hidden = m || ro || !editing;
+  $("#sheet-title").textContent = m ? "Nouveau passage — "+editing.nom
+                                    : (editing ? editing.nom : "Nouvelle table");
+  /* en mode passage, l'identité de la table est verrouillée */
+  $("#f-nom").disabled = ro || m;
+  $("#f-commune").disabled = ro || m;
+  ["#fr-style","#fr-distinction","#fr-gamme","#f-statut","#fr-violette","#fr-envie"]
+    .forEach(h=>[...$(h).children].forEach(b=>{ b.disabled = ro || m; }));
+}
+$("#add-visite").addEventListener("click", ()=>{
+  if(!editing || !canEdit()) return;
+  modeVisite = true;
+  $("#f-date").value = new Date().toISOString().slice(0,10);
+  $("#f-note-in").value=""; $("#f-prix").value=""; $("#f-com").value=""; $("#f-format").value="";
+  $$("#crits .stars button").forEach(b=>b.classList.remove("on"));
+  noteManuelle=false; gammeManuelle=true;
+  majAssistNote(); majAssistGamme(); majModeVisite();
+  $("#f-date").focus();
+});
+
 /* ---------- fiche ---------- */
 function openSheet(id){
   editing = id ? RESTOS.find(r=>r.id===id) : null;
@@ -2422,7 +2537,8 @@ function openSheet(id){
   $("#save").hidden=ro; $("#del").hidden = ro || !editing;
   $("#ac").hidden=true; acCoords={la:null,lo:null};
   majAssistNote(); majAssistGamme();
-  $("#sheet").showModal();
+  modeVisite=false; renderHisto(); majModeVisite();
+  if(!$("#sheet").open) $("#sheet").showModal();   // openSheet peut recharger une fiche déjà ouverte
 }
 $("#crits").addEventListener("click", e=>{
   const b=e.target.closest("button[data-n]"); if(!b || b.disabled) return;
@@ -2525,11 +2641,37 @@ $("#form").addEventListener("submit", async e=>{
     envie: chipValue("#f-statut")==="afaire" ? +chipValue("#fr-envie") : null
   };
   const btn=$("#save"); btn.disabled=true; btn.textContent="Enregistrement…";
+
+  /* mode passage : on n'écrase rien, on empile une visite et la plus récente
+     redevient la référence affichée partout ailleurs. */
+  if(modeVisite && editing){
+    const v = {};
+    if(data.date) v.date=data.date;
+    if(data.note!=null) v.note=data.note;
+    if(data.prix!=null) v.prix=data.prix;
+    if(data.format) v.format=data.format;
+    if(data.com) v.com=data.com;
+    if(Object.keys(crit).length) v.crit=crit;
+    ajouterVisite(editing, v);
+    editing.statut="faite"; delete editing.envie;   // on ne va pas « à faire » une table qu'on vient de faire
+    btn.disabled=false; btn.textContent="Enregistrer";
+    modeVisite=false;
+    $("#sheet").close(); touch(); render();
+    return;
+  }
+
   let cible;
   if(editing){ Object.assign(editing,data); cible=editing; }
   else { cible={id:Math.max(0,...RESTOS.map(r=>r.id))+1, la:null, lo:null, ...data}; RESTOS.push(cible); }
   if(!cible.violette) delete cible.violette;   // on ne stocke le bonus que lorsqu'il est actif
   if(cible.statut!=="afaire" || !cible.envie) delete cible.envie;
+  /* modifier une fiche à plusieurs passages doit corriger le passage le plus
+     récent, pas seulement les champs plats qui en sont la copie */
+  if(Array.isArray(cible.visites) && cible.visites.length){
+    Object.assign(cible.visites[0], {date:data.date, note:data.note, prix:data.prix,
+      format:data.format, com:data.com, crit});
+    projeter(cible);
+  }
   if(acCoords.la){ cible.la=acCoords.la; cible.lo=acCoords.lo; }
   /* corriger une commune laissait le repère à l'ancien endroit, définitivement :
      on relocalise dès que la commune a changé, pas seulement quand elle manque. */
@@ -2550,9 +2692,10 @@ $("#del").addEventListener("click", ()=>{
 });
 
 $("#csv").addEventListener("click", ()=>{
-  const cols=["nom","commune","style","gamme","distinction","note","violette","envie","date","prix","format","statut","com"];
+  const cols=["nom","commune","style","gamme","distinction","note","passages","violette","envie","date","prix","format","statut","com"];
   const cell = (r,c) =>
       c==="violette" ? (r.violette?"oui":"")
+    : c==="passages" ? (r.statut==="faite" ? visitesDe(r).length : "")
     : c==="envie"    ? (r.statut==="afaire" ? (ENVIE_LAB[envieDe(r)]||"") : "")
     : (r[c]??"");
   const ligne = r => cols.map(c=>`"${String(cell(r,c)).replace(/"/g,'""')}"`).join(";");
