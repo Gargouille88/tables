@@ -161,6 +161,53 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .maphint{font-size:12.5px;color:var(--soft);margin-top:9px;min-height:19px}
 .pin.moi .b{border-color:var(--sage);color:var(--sage)}
 .pin.moi .n{background:var(--sage)}
+/* le nom n'apparaît qu'à partir du zoom 12 : au-delà, 55 étiquettes se chevauchent */
+.pin .lbl{display:inline-flex;align-items:center}
+#map:not(.detail) .pin .lbl{display:none}
+#map:not(.detail) .pin .b{padding:3px;gap:0;border-radius:999px}
+#map:not(.detail) .pin.moi .lbl{display:none}
+.rayon{fill:var(--garnet);fill-opacity:.045;stroke:var(--garnet);stroke-width:1;stroke-dasharray:5 4;stroke-opacity:.5}
+
+/* tri de repli : seul moyen de trier une fois l'en-tête de tableau masqué en mobile */
+.sortbar{display:none;align-items:center;gap:9px;margin:0 0 15px}
+.sortbar label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);flex:0 0 auto}
+.sortbar select{flex:1;min-width:0}
+
+/* sélecteur « on va où ? » */
+.boussole{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--garnet);padding:15px 16px 16px;margin-bottom:20px}
+.boussole h2{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 60,"wght" 500;font-size:19px;margin:0 0 3px;letter-spacing:-.015em}
+.boussole p.sub{margin:0 0 13px;font-size:12.5px;color:var(--soft);max-width:64ch}
+.boussole .filters{margin-bottom:13px;padding-bottom:13px}
+.boussole .fl{flex:0 0 58px;padding-top:11px}
+.boussole .cmd{display:flex;gap:8px;flex-wrap:wrap}
+.props{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:10px}
+.props:not(:empty){margin-top:15px}
+.prop{display:block;width:100%;text-align:left;background:var(--ground);border:1px solid var(--line);border-top:2px solid var(--garnet);border-radius:0;padding:11px 13px 12px;cursor:pointer;font:inherit;color:inherit}
+.prop:hover{border-color:var(--ink);border-top-color:var(--garnet)}
+.prop.sort{border-top-color:var(--violette)}
+.prop.sort:hover{border-top-color:var(--violette)}
+.prop .rg{display:block;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft)}
+.prop.sort .rg{color:var(--violette)}
+.prop .nm{display:block;font-weight:600;font-size:15px;line-height:1.25;margin:4px 0 1px;letter-spacing:-.012em}
+.prop .pl{display:block;font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 14,"wght" 300;font-style:italic;font-size:13px;color:var(--soft)}
+.prop .mt{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--soft)}
+.prop .mt span{border:1px solid var(--line);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.prop .mt .env{color:var(--brass);border-color:rgba(164,134,60,.42)}
+
+/* encart « y retourner » */
+#revisites{margin-top:38px}
+.relances{border-top:1px solid var(--line);border-bottom:2px solid var(--ink)}
+.relance{display:flex;align-items:center;gap:13px;width:100%;padding:11px 4px;border:0;border-bottom:1px solid var(--line);background:none;font:inherit;color:inherit;text-align:left;cursor:pointer;transition:background .12s ease,box-shadow .12s ease}
+.relance:last-child{border-bottom:0}
+.relance:hover{background:rgba(110,32,56,.045);box-shadow:inset 3px 0 0 var(--garnet)}
+.relance .t{flex:1;min-width:0}
+.relance .t b{font-weight:600;letter-spacing:-.012em}
+.relance .t small{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--soft);margin-top:2px}
+
+/* aides de saisie de la fiche */
+.assist{display:block}
+.assist b{font-weight:600;color:var(--ink)}
+.assist button{font-family:inherit;font-size:11.5px;background:none;border:0;padding:0;margin-left:2px;color:var(--garnet);text-decoration:underline;cursor:pointer;min-height:0}
 
 .cfglist{border-top:1px solid var(--line);border-bottom:2px solid var(--ink);margin-bottom:12px}
 .cfgrow:last-child{border-bottom:0}
@@ -210,9 +257,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
   .note{min-width:48px;height:34px;font-size:16px}
   .c-style{grid-area:style}
   .c-dist{grid-area:dist;text-align:right;align-self:center}
+  .sortbar{display:flex}
   .grid{grid-template-columns:1fr}
   .fg{display:block}
   .fl{padding:0 0 6px;display:block}
+  .boussole .fl{flex:none;padding:0 0 6px}
+  .props{grid-template-columns:1fr}
   dialog{width:100vw;max-width:100vw;max-height:100vh;height:100vh;border:0;border-radius:0}
   .sheet{padding:20px 18px calc(28px + env(safe-area-inset-bottom))}
   #map{height:64vh}
@@ -250,6 +300,37 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
       <button class="btn btn-solid" id="add">+ Nouvelle table</button>
       <button class="btn btn-quiet" id="csv">CSV</button>
     </div>
+
+    <div class="sortbar">
+      <label for="tri">Trier</label>
+      <select id="tri">
+        <option value="note:-1">Note, la meilleure d'abord</option>
+        <option value="note:1">Note, la moins bonne d'abord</option>
+        <option value="nom:1">Nom, de A à Z</option>
+        <option value="nom:-1">Nom, de Z à A</option>
+        <option value="distinction:-1">Michelin, la plus distinguée d'abord</option>
+        <option value="distinction:1">Michelin, la moins distinguée d'abord</option>
+        <option value="style:1">Style, dans l'ordre des réglages</option>
+        <option value="style:-1">Style, en ordre inverse</option>
+      </select>
+    </div>
+
+    <section class="boussole" id="boussole" hidden>
+      <h2>On va où ?</h2>
+      <p class="sub">Parmi les tables à faire, celles qui tiennent dans le rayon choisi, classées par envie puis par distance. Le point de départ se règle dans Réglages.</p>
+      <div class="filters">
+        <div class="fg"><span class="fl">Rayon</span><div class="chips" id="b-rayon" data-value="30"></div></div>
+        <div class="fg"><span class="fl">Gamme</span><div class="chips" id="b-gamme" data-value=""></div></div>
+        <div class="fg"><span class="fl">Envie</span><div class="chips" id="b-envie" data-value=""></div></div>
+      </div>
+      <div class="cmd">
+        <button type="button" class="btn btn-solid" id="b-go">Proposer</button>
+        <button type="button" class="btn" id="b-hasard">Au hasard</button>
+      </div>
+      <div class="props" id="b-props"></div>
+      <p class="maphint" id="b-hint"></p>
+    </section>
+
     <div class="filters" id="filters">
       <div class="fg"><span class="fl">Style</span><div class="chips" id="f-style" data-value=""></div></div>
       <div class="fg"><span class="fl">Distinction</span><div class="chips" id="f-dist" data-value=""></div></div>
@@ -262,6 +343,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
       <button data-sort="note">Note</button>
     </div>
     <div class="list" id="list"></div>
+
+    <section class="panel" id="revisites" hidden>
+      <h2>Y retourner</h2>
+      <p class="sub">Vos tables notées 8 ou plus, les plus anciennement visitées en tête. Une envie de nouveau plutôt qu'une envie de neuf.</p>
+      <div class="relances" id="rev-liste"></div>
+    </section>
   </section>
 
   <section id="view-carte" hidden>
@@ -318,6 +405,14 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
       <button class="btn btn-sm" id="add-style">+ Ajouter un style</button>
     </div>
     <div class="panel">
+      <h2>Point de départ</h2>
+      <p class="sub">La commune d'où sont mesurées les distances du sélecteur « On va où ? ». Saisissez un nom de commune : les coordonnées sont retrouvées automatiquement.</p>
+      <div class="grid">
+        <div class="field"><label for="cfg-base">Commune</label><input type="text" id="cfg-base"></div>
+        <div class="field"><span class="lbl">Coordonnées</span><span class="hint" id="cfg-base-co"></span></div>
+      </div>
+    </div>
+    <div class="panel">
       <h2>Dépôt GitHub</h2>
       <p class="sub">Où la publication écrit. Le fichier doit contenir les deux marqueurs de données.</p>
       <div class="grid">
@@ -349,17 +444,21 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
       <div class="field"><label for="f-date">Date de la visite</label><input type="date" id="f-date"></div>
       <div class="field full"><span class="lbl">Style</span><div class="chips" id="fr-style" data-value=""></div></div>
       <div class="field full"><span class="lbl">Distinction</span><div class="chips" id="fr-distinction" data-value=""></div></div>
-      <div class="field full"><span class="lbl">Gamme de prix</span><div class="chips" id="fr-gamme" data-value=""></div></div>
+      <div class="field full"><span class="lbl">Gamme de prix</span><div class="chips" id="fr-gamme" data-value=""></div>
+        <span class="hint assist" id="hint-gamme" hidden></span></div>
       <div class="field"><label for="f-format">Format</label>
         <select id="f-format"><option value="">—</option><option>Carte</option><option>Menu unique</option><option>Menu dégustation</option></select>
       </div>
       <div class="field"><label for="f-prix">Ticket par personne (€)</label><input type="number" id="f-prix" min="0" step="1"></div>
-      <div class="field"><label for="f-note-in">Note globale sur 10</label><input type="number" id="f-note-in" min="0" max="10" step="1"></div>
+      <div class="field"><label for="f-note-in">Note globale sur 10</label><input type="number" id="f-note-in" min="0" max="10" step="1">
+        <span class="hint assist" id="hint-note" hidden></span></div>
       <div class="field full"><span class="lbl">Critères</span><div class="crits-box" id="crits"></div></div>
       <div class="field full"><span class="lbl">Bonus violette</span><div class="chips" id="fr-violette" data-value=""></div>
         <span class="hint">Les tables particulièrement appréciées par Violette.</span></div>
       <div class="field full"><label for="f-com">Commentaire</label><textarea id="f-com" placeholder="Ce qui a marqué, en bien comme en mal."></textarea></div>
       <div class="field full"><span class="lbl">Statut</span><div class="chips" id="f-statut" data-value="faite"></div></div>
+      <div class="field full" id="champ-envie" hidden><span class="lbl">Envie d'y aller</span><div class="chips" id="fr-envie" data-value="2"></div>
+        <span class="hint">Sert à classer les propositions du sélecteur « On va où ? ».</span></div>
     </div>
     <div class="actions">
       <button type="button" class="btn btn-quiet left" id="del" hidden>Supprimer</button>
@@ -382,7 +481,12 @@ textarea{resize:vertical;min-height:64px;line-height:1.45}
 let CFG = {
  "user": "gargouille88",
  "repo": "tables",
- "file": "index.html"
+ "file": "index.html",
+ "base": {
+  "nom": "Berstheim",
+  "la": 48.7758,
+  "lo": 7.6564
+ }
 };
 
 let STYLES = [
@@ -1235,8 +1339,7 @@ let RESTOS = [
    "service": 3,
    "qp": 5
   },
-  "statut": "faite",
-  "violette": true
+  "statut": "faite"
  },
  {
   "id": 43,
@@ -1544,6 +1647,34 @@ const CRITERES = [{k:"cuisine",l:"Cuisine"},{k:"cadre",l:"Cadre"},{k:"service",l
 const M_DEB = "/*" + " __DATA_DEBUT__ " + "*/";   // assemblés par morceaux : le fichier
 const M_FIN = "/*" + " __DATA_FIN__ " + "*/";     // ne contient qu'une seule vraie occurrence de chacun
 
+/* envie d'y aller : ne concerne que les tables à faire, 2 par défaut */
+const ENVIES = [{v:"1",l:"Un jour"},{v:"2",l:"Volontiers"},{v:"3",l:"Au plus vite"}];
+const ENVIE_LAB = {1:"un jour",2:"volontiers",3:"au plus vite"};
+const envieDe = r => r.envie ?? 2;
+const RAYONS = [{v:"30",l:"30 km"},{v:"50",l:"50 km"},{v:"80",l:"80 km"},{v:"",l:"Sans limite"}];
+const RAYON_CARTE = 25;                  // rayon du cercle tracé autour de votre position
+const BASE_DEFAUT = {nom:"Berstheim", la:48.7758, lo:7.6564};
+
+/* déduction de la gamme depuis le ticket. Seuils calés sur vos propres fiches :
+   ils retrouvent votre étiquette dans 74 % des cas, donc c'est une suggestion,
+   jamais une réécriture silencieuse d'une gamme que vous avez déjà choisie.     */
+const SEUILS_GAMME = [26,46,111];
+const gammeDuPrix = p => !(p>0) ? null
+  : p<SEUILS_GAMME[0] ? "€" : p<SEUILS_GAMME[1] ? "€€" : p<SEUILS_GAMME[2] ? "€€€" : "€€€€";
+
+/* note globale déduite des critères, la cuisine comptant double.
+   Écart absolu moyen de 0,8 point avec vos notes réelles sur les fiches complètes. */
+const POIDS = {cuisine:2, cadre:1, service:1, qp:1};
+function noteDesCriteres(crit){
+  if(!crit) return null;
+  let somme=0, poids=0;
+  for(const c of CRITERES){
+    const v = crit[c.k];
+    if(v!=null){ somme += v*POIDS[c.k]; poids += POIDS[c.k]; }
+  }
+  return poids ? Math.round(somme/poids*2) : null;
+}
+
 /* ---------- jeton ---------- */
 let TOKEN = (()=>{ try{ return localStorage.getItem("gh_token"); }catch(e){ return null; } })();
 function setToken(t){
@@ -1553,7 +1684,8 @@ function setToken(t){
 const canEdit = () => !!TOKEN;
 
 let tab="faites", sortKey="note", sortDir=-1, editing=null, dirty=0, lastSync=null,
-    syncing=false, map=null, layer=null, moiMarker=null, centre={la:48.72,lo:7.62};
+    syncing=false, map=null, layer=null, moiMarker=null, cercleMoi=null, carteCadree=false,
+    centre={la:48.72,lo:7.62};
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
@@ -1657,12 +1789,16 @@ function onChips(host, cb){
     const b=e.target.closest("button[data-v]"); if(!b || b.disabled) return;
     $(host).dataset.value = b.dataset.v;
     [...$(host).children].forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
-    cb($(host).dataset.v);
+    cb(b.dataset.v);   // et non dataset.v du conteneur, qui n'existe pas
   });
 }
 
 /* ---------- filtres ---------- */
 function initFiltres(){
+  /* un style renommé ou supprimé laissait le filtre pointer sur l'ancien libellé :
+     liste vide, aucun bouton actif, badge faux. On repart de « Tous » dans ce cas. */
+  const fs = chipValue("#f-style");
+  if(fs && !STYLES.includes(fs)) $("#f-style").dataset.value = "";
   chips("#f-style", [{v:"",l:"Tous"}].concat(STYLES.map(x=>({v:x,l:x}))),
         {value:chipValue("#f-style")||""});
   chips("#f-dist", [{v:"",l:"Toutes"}]
@@ -1671,6 +1807,7 @@ function initFiltres(){
         {value:chipValue("#f-dist")||""});
   chips("#f-vio", [{v:"",l:"Toutes"},{v:"1",l:"Bonus violette"}],
         {value:chipValue("#f-vio")||""});
+  majBadge();
 }
 function majBadge(){
   const k = (chipValue("#f-style")?1:0) + (chipValue("#f-dist")?1:0) + (chipValue("#f-vio")?1:0);
@@ -1738,7 +1875,93 @@ function renderList(){
     b.classList.toggle("on", actif);
     if(actif) b.dataset.dir = sortDir>0 ? "asc" : "desc"; else b.removeAttribute("data-dir");
   });
+  $("#tri").value = sortKey+":"+sortDir;   // l'en-tête de tableau disparaît en mobile
+  const enAttente = tab==="afaire";
+  $("#boussole").hidden = !enAttente;
+  $("#revisites").hidden = !enAttente;
+  if(enAttente) renderRevisites();
 }
+
+/* ---------- on va où ? ---------- */
+const baseCoord = () => {
+  const b = CFG.base;
+  return (b && b.la!=null && b.lo!=null) ? b : BASE_DEFAUT;
+};
+function candidats(){
+  const b = baseCoord();
+  const ray=chipValue("#b-rayon"), ga=chipValue("#b-gamme"), en=chipValue("#b-envie");
+  return RESTOS.filter(r=>r.statut==="afaire")
+    .map(r=>({r, d: (r.la&&r.lo) ? distance(b.la,b.lo,r.la,r.lo) : null, e: envieDe(r)}))
+    .filter(x => !ray || (x.d!=null && x.d<=+ray))
+    .filter(x => !ga  || x.r.gamme===ga)
+    .filter(x => !en  || x.e>=+en);
+}
+function carteProp(x, rang, cls){
+  const r=x.r;
+  return `<button type="button" class="prop ${cls||""}" data-id="${r.id}">
+    <span class="rg">${esc(rang)}</span>
+    <span class="nm">${esc(r.nom)}${FLAG(r)}${VIO(r)}</span>
+    <span class="pl">${esc(r.commune)||"—"}</span>
+    <span class="mt">
+      <span>${x.d!=null ? Math.round(x.d)+" km" : "non localisée"}</span>
+      <span>${esc(r.gamme)}</span>
+      ${r.distinction!=="—" ? `<span>${esc(r.distinction)}</span>` : ""}
+      <span class="env">envie : ${esc(ENVIE_LAB[x.e]||"volontiers")}</span>
+    </span>
+  </button>`;
+}
+function aucunCandidat(){
+  $("#b-props").innerHTML = "";
+  $("#b-hint").textContent = "Aucune table à faire ne correspond. Élargissez le rayon, ou baissez l'exigence d'envie.";
+}
+function proposer(){
+  const c = candidats().sort((a,b)=> b.e-a.e || (a.d ?? Infinity)-(b.d ?? Infinity));
+  if(!c.length) return aucunCandidat();
+  const rangs = ["Le meilleur choix","Deuxième","Troisième"];
+  $("#b-props").innerHTML = c.slice(0,3).map((x,i)=>carteProp(x, rangs[i])).join("");
+  const ray=chipValue("#b-rayon");
+  $("#b-hint").textContent = c.length+" table"+(c.length>1?"s":"")+" retenue"+(c.length>1?"s":"")
+    + (ray ? " dans "+ray+" km" : "") + " au départ de "+(baseCoord().nom||"votre point de départ")+".";
+}
+function auHasard(){
+  const c = candidats();
+  if(!c.length) return aucunCandidat();
+  const x = c[Math.floor(Math.random()*c.length)];
+  $("#b-props").innerHTML = carteProp(x, "Le sort a tranché", "sort");
+  $("#b-hint").textContent = "Tirée parmi "+c.length+" table"+(c.length>1?"s":"")+". Retirez autant de fois que vous voulez.";
+}
+$("#b-go").addEventListener("click", proposer);
+$("#b-hasard").addEventListener("click", auHasard);
+$("#b-props").addEventListener("click", e=>{
+  const b=e.target.closest(".prop"); if(b) openSheet(+b.dataset.id);
+});
+
+/* ---------- y retourner ---------- */
+const MOIS = 30.44*24*3600*1000;
+function renderRevisites(){
+  const maintenant = Date.now();
+  const rows = RESTOS
+    .filter(r=>r.statut==="faite" && r.note!=null && r.note>=8)
+    .map(r=>{ const t = r.date ? Date.parse(r.date) : NaN;
+              return {r, mois: isNaN(t) ? null : (maintenant-t)/MOIS}; })
+    /* les fiches sans date passent en dernier : on ne peut pas prétendre qu'elles sont anciennes */
+    .sort((a,b)=> (b.mois ?? -1)-(a.mois ?? -1) || b.r.note-a.r.note)
+    .slice(0,6);
+  $("#rev-liste").innerHTML = rows.length ? rows.map(x=>{
+    const m=x.mois;
+    const quand = m==null ? "date de visite non renseignée"
+      : m<1  ? "vue ce mois-ci"
+      : m<18 ? "vue il y a "+Math.round(m)+" mois"
+      : "vue il y a "+(m/12).toFixed(1).replace(".",",")+" ans";
+    return `<button type="button" class="relance" data-id="${x.r.id}">
+      <span class="note ${sc(x.r.note)}">${x.r.note}</span>
+      <span class="t"><b>${esc(x.r.nom)}</b>${FLAG(x.r)}${VIO(x.r)}<small>${esc(x.r.commune)} · ${quand}</small></span>
+    </button>`;
+  }).join("") : `<div class="empty"><strong>Rien à relancer</strong>Aucune table notée 8 ou plus pour l'instant.</div>`;
+}
+$("#rev-liste").addEventListener("click", e=>{
+  const b=e.target.closest(".relance"); if(b) openSheet(+b.dataset.id);
+});
 
 /* ---------- carte ---------- */
 function initMap(){
@@ -1747,6 +1970,12 @@ function initMap(){
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(map);
   layer = L.layerGroup().addTo(map);
   map.on("moveend", ()=>{ const c=map.getCenter(); centre={la:c.lat, lo:c.lng}; });
+  map.on("zoomend", majDetail);
+  majDetail();
+}
+/* en dessous du zoom 12, les pastilles seules : 55 étiquettes en clair se chevauchent */
+function majDetail(){
+  if(map) map.getContainer().classList.toggle("detail", map.getZoom()>=12);
 }
 function renderMap(cadrer){
   if(cadrer===undefined) cadrer=true;
@@ -1760,10 +1989,11 @@ function renderMap(cadrer){
     const done = r.statut==="faite" && r.note!=null;
     const cls  = (!done ? "todo" : r.note>=9 ? "" : r.note>=7 ? "mid" : "lo") + (r.violette ? " vio" : "");
     const icon = L.divIcon({className:"pin "+cls, iconSize:null, iconAnchor:[12,12],
-      html:`<span class="b"><span class="n">${done?r.note:"·"}</span>${esc(r.nom)}${VIO(r)}</span>`});
+      html:`<span class="b"><span class="n">${done?r.note:"·"}</span><span class="lbl">${esc(r.nom)}${VIO(r)}</span></span>`});
     L.marker([r.la,r.lo],{icon,title:r.nom}).addTo(layer).on("click",()=>openSheet(r.id));
   });
   if(cadrer && pts.length) map.fitBounds(L.latLngBounds(pts.map(r=>[r.la,r.lo])).pad(.18),{maxZoom:13});
+  majDetail();
   const manque = sel.length - pts.length;
   $("#maphint").textContent = manque
     ? manque+" table"+(manque>1?"s":"")+" sans repère : la commune n'a pas encore pu être localisée."
@@ -1786,13 +2016,20 @@ $("#m-loc").addEventListener("click", ()=>{
       if(moiMarker) map.removeLayer(moiMarker);
       moiMarker = L.marker([la,lo],{zIndexOffset:1000, icon:L.divIcon({className:"pin moi",
         iconSize:null, iconAnchor:[12,12],
-        html:'<span class="b"><span class="n">◉</span>Vous êtes ici</span>'})}).addTo(map);
-      map.setView([la,lo],12);
-      const proche = RESTOS.filter(r=>r.la&&r.lo)
-        .map(r=>({r, d:distance(la,lo,r.la,r.lo)})).sort((a,b)=>a.d-b.d)[0];
-      $("#maphint").textContent = proche
-        ? "Table la plus proche : "+proche.r.nom+", à "+proche.d.toFixed(1)+" km à vol d'oiseau."
-        : "Position trouvée.";
+        html:'<span class="b"><span class="n">◉</span><span class="lbl">Vous êtes ici</span></span>'})}).addTo(map);
+      if(cercleMoi) map.removeLayer(cercleMoi);
+      cercleMoi = L.circle([la,lo],{radius:RAYON_CARTE*1000, className:"rayon", interactive:false}).addTo(map);
+      map.fitBounds(cercleMoi.getBounds().pad(.06));
+      majDetail();
+      const dans = RESTOS.filter(r=>r.la&&r.lo)
+        .map(r=>({r, d:distance(la,lo,r.la,r.lo)}))
+        .filter(x=>x.d<=RAYON_CARTE).sort((a,b)=>a.d-b.d);
+      const af = dans.filter(x=>x.r.statut==="afaire").length;
+      $("#maphint").textContent = dans.length
+        ? dans.length+" table"+(dans.length>1?"s":"")+" dans "+RAYON_CARTE+" km"
+          + (af ? ", dont "+af+" à faire" : "")
+          + " · la plus proche : "+dans[0].r.nom+", à "+dans[0].d.toFixed(1).replace(".",",")+" km à vol d'oiseau."
+        : "Aucune table dans un rayon de "+RAYON_CARTE+" km autour de vous.";
     },
     err=>{
       $("#maphint").textContent = err.code===1
@@ -1853,11 +2090,17 @@ const BORNES = [0,40,70,110,170,Infinity];
 const ETIQ   = ["moins de 40 €","40 à 70 €","70 à 110 €","110 à 170 €","plus de 170 €"];
 const TICKS  = [20,30,50,75,100,150,200,300,500,750];
 
+const SUB_PRIX = "Chaque table faite selon ce qu'elle a coûté, échelle logarithmique. La ligne relie la moyenne de chaque tranche de prix ; la bande grisée signale la tranche la moins convaincante.";
+const messagePlot = t => '<text x="16" y="34" font-family="IBM Plex Sans" font-size="13" fill="#5A6068">'+t+'</text>';
+
 function plotPrix(done){
   const pts = done.filter(r=>r.prix>0);
   const svg = $("#plot");
-  if(pts.length<3){ svg.innerHTML='<text x="16" y="34" font-family="IBM Plex Sans" font-size="13" fill="#5A6068">Renseignez le ticket d\'au moins trois tables pour voir ce nuage.</text>'; return; }
+  $("#plot-sub").textContent = SUB_PRIX;   // sinon la phrase de la tranche creuse survit à sa tranche
+  if(pts.length<3){ svg.innerHTML=messagePlot("Renseignez le ticket d'au moins trois tables pour voir ce nuage."); return; }
   const W=720,H=340,Lm=46,Rm=22,T=18,B=56;
+  /* le rembourrage /1,25 et ×1,25 garantit bas < haut même si tous les tickets
+     sont identiques : l'échelle logarithmique ne peut pas dégénérer ici. */
   const bas = Math.min(...pts.map(r=>r.prix))/1.25, haut = Math.max(...pts.map(r=>r.prix))*1.25;
   const lb=Math.log(bas), lh=Math.log(haut);
   const px = v => Lm + (Math.log(v)-lb)/(lh-lb)*(W-Lm-Rm);
@@ -1963,6 +2206,11 @@ function renderReglages(){
     </div>`;
   }).join("");
   $("#cfg-user").value=CFG.user; $("#cfg-repo").value=CFG.repo; $("#cfg-file").value=CFG.file;
+  const b = CFG.base || {};
+  $("#cfg-base").value = b.nom || "";
+  $("#cfg-base-co").textContent = b.la!=null
+    ? b.la.toFixed(4)+", "+b.lo.toFixed(4)
+    : "non localisée — les distances repartent de "+BASE_DEFAUT.nom;
 }
 $("#view-reglages").addEventListener("click", e=>{
   if(!canEdit()) return;
@@ -1991,11 +2239,70 @@ $("#view-reglages").addEventListener("change", e=>{
     initFiltres(); renderReglages(); touch();
     return;
   }
+  if(e.target.id==="cfg-base"){
+    const nom=e.target.value.trim();
+    if(!nom || nom===(CFG.base&&CFG.base.nom)) return;
+    $("#cfg-base-co").textContent="recherche en cours…";
+    localiser(nom).then(c=>{
+      CFG.base = c ? {nom, la:c.la, lo:c.lo} : {nom, la:null, lo:null};
+      renderReglages(); touch();
+    });
+    return;
+  }
   if(e.target.id==="cfg-user") CFG.user=e.target.value.trim();
   if(e.target.id==="cfg-repo") CFG.repo=e.target.value.trim();
   if(e.target.id==="cfg-file") CFG.file=e.target.value.trim();
   renderSync(); touch();
 });
+
+/* ---------- aides de saisie de la fiche ---------- */
+let noteManuelle=false, gammeManuelle=false, communeInitiale="";
+
+function critsSaisis(){
+  const c={};
+  $$("#crits .stars").forEach(s=>{
+    const n=[...s.children].filter(b=>b.classList.contains("on")).length;
+    if(n) c[s.dataset.c]=n;
+  });
+  return c;
+}
+function majAssistNote(){
+  const h=$("#hint-note"), n=noteDesCriteres(critsSaisis());
+  if(n==null || !canEdit()){ h.hidden=true; return; }
+  if(!noteManuelle){
+    $("#f-note-in").value = n;
+    h.hidden=false;
+    h.textContent = "Déduite des critères, la cuisine comptant double. Modifiable.";
+  } else if(+$("#f-note-in").value !== n){
+    h.hidden=false;
+    h.innerHTML = `Les critères donnent <b>${n}</b>/10. <button type="button" id="app-note">Appliquer</button>`;
+  } else h.hidden=true;
+}
+function majAssistGamme(){
+  const h=$("#hint-gamme");
+  const p = $("#f-prix").value==="" ? null : +$("#f-prix").value;
+  const g = gammeDuPrix(p);
+  if(!g || !canEdit()){ h.hidden=true; return; }
+  if(!gammeManuelle){
+    chips("#fr-gamme", GAMMES.map(x=>({v:x,l:x==="—"?"N.C.":x})), {value:g});
+    h.hidden=false;
+    h.textContent = "Déduite du ticket. Modifiable.";
+  } else if(chipValue("#fr-gamme")!==g){
+    h.hidden=false;
+    h.innerHTML = `Un ticket de ${p} € correspond plutôt à <b>${g}</b>. <button type="button" id="app-gamme">Appliquer</button>`;
+  } else h.hidden=true;
+}
+$("#hint-note").addEventListener("click", e=>{
+  if(e.target.id!=="app-note") return;
+  noteManuelle=false; majAssistNote();
+});
+$("#hint-gamme").addEventListener("click", e=>{
+  if(e.target.id!=="app-gamme") return;
+  gammeManuelle=false; majAssistGamme();
+});
+$("#f-note-in").addEventListener("input", ()=>{ noteManuelle=true; majAssistNote(); });
+$("#f-prix").addEventListener("input", majAssistGamme);
+function majChampEnvie(){ $("#champ-envie").hidden = chipValue("#f-statut")!=="afaire"; }
 
 /* ---------- fiche ---------- */
 function openSheet(id){
@@ -2016,6 +2323,13 @@ function openSheet(id){
   chips("#fr-gamme", GAMMES.map(g=>({v:g,l:g==="—"?"N.C.":g})), {value:r.gamme, disabled:ro});
   chips("#f-statut", [{v:"faite",l:"Table faite"},{v:"afaire",l:"À faire"}], {value:r.statut, disabled:ro});
   chips("#fr-violette", [{v:"",l:"Non"},{v:"1",l:"Oui"}], {value:r.violette?"1":"", disabled:ro});
+  chips("#fr-envie", ENVIES, {value:String(envieDe(r)), disabled:ro});
+  majChampEnvie();
+  /* une fiche déjà notée ou déjà rangée dans une gamme ne se fait pas réécrire
+     dans le dos : l'aide n'y propose qu'un « appliquer ». */
+  noteManuelle   = editing ? r.note!=null  : false;
+  gammeManuelle  = !!editing;
+  communeInitiale = r.commune || "";
   $("#crits").innerHTML = CRITERES.map(c=>`
     <div class="crit"><label>${c.l}</label>
       <span class="stars" data-c="${c.k}">${[1,2,3,4,5].map(n=>
@@ -2024,6 +2338,7 @@ function openSheet(id){
   $$("#form input,#form select,#form textarea").forEach(el=>el.disabled=ro);
   $("#save").hidden=ro; $("#del").hidden = ro || !editing;
   $("#ac").hidden=true; acCoords={la:null,lo:null};
+  majAssistNote(); majAssistGamme();
   $("#sheet").showModal();
 }
 $("#crits").addEventListener("click", e=>{
@@ -2032,6 +2347,7 @@ $("#crits").addEventListener("click", e=>{
   const actuel=freres.filter(x=>x.classList.contains("on")).length;
   const seuil = (actuel===+b.dataset.n) ? 0 : +b.dataset.n;   // recliquer la même étoile efface
   freres.forEach(x=>x.classList.toggle("on", +x.dataset.n <= seuil));
+  majAssistNote();
 });
 
 /* ---------- autocomplétion restaurants (Photon / OpenStreetMap) ---------- */
@@ -2097,12 +2413,18 @@ $("#ac").addEventListener("click", e=>{
 document.addEventListener("click", e=>{
   if(!e.target.closest("#ac") && e.target.id!=="f-nom") $("#ac").hidden=true;
 });
+/* le suffixe « , Alsace » n'est plus imposé : il envoyait n'importe où une table
+   de Bade ou de Moselle. On s'appuie d'abord sur le biais géographique de Photon,
+   et on ne retombe sur l'Alsace que si la recherche nue ne donne rien.          */
 async function localiser(commune){
   if(!commune) return null;
-  try{
-    const f = (await photon(commune+", Alsace", {tags:false,limit:1}))[0];
-    return f ? {la:+f.geometry.coordinates[1].toFixed(5), lo:+f.geometry.coordinates[0].toFixed(5)} : null;
-  }catch(e){ return null; }
+  const essai = async q => {
+    try{
+      const f = (await photon(q,{tags:false,limit:1}))[0];
+      return f ? {la:+f.geometry.coordinates[1].toFixed(5), lo:+f.geometry.coordinates[0].toFixed(5)} : null;
+    }catch(e){ return null; }
+  };
+  return (await essai(commune)) || (await essai(commune+", Alsace"));
 }
 
 $("#form").addEventListener("submit", async e=>{
@@ -2116,15 +2438,20 @@ $("#form").addEventListener("submit", async e=>{
     distinction:chipValue("#fr-distinction"), note:$("#f-note-in").value===""?null:+$("#f-note-in").value,
     date:$("#f-date").value, prix:$("#f-prix").value===""?null:+$("#f-prix").value,
     format:$("#f-format").value, com:$("#f-com").value.trim(), crit, statut:chipValue("#f-statut"),
-    violette: chipValue("#fr-violette")==="1"
+    violette: chipValue("#fr-violette")==="1",
+    envie: chipValue("#f-statut")==="afaire" ? +chipValue("#fr-envie") : null
   };
   const btn=$("#save"); btn.disabled=true; btn.textContent="Enregistrement…";
   let cible;
   if(editing){ Object.assign(editing,data); cible=editing; }
   else { cible={id:Math.max(0,...RESTOS.map(r=>r.id))+1, la:null, lo:null, ...data}; RESTOS.push(cible); }
   if(!cible.violette) delete cible.violette;   // on ne stocke le bonus que lorsqu'il est actif
+  if(cible.statut!=="afaire" || !cible.envie) delete cible.envie;
   if(acCoords.la){ cible.la=acCoords.la; cible.lo=acCoords.lo; }
-  if(!cible.la && cible.commune){
+  /* corriger une commune laissait le repère à l'ancien endroit, définitivement :
+     on relocalise dès que la commune a changé, pas seulement quand elle manque. */
+  else if(cible.commune && (!cible.la || cible.commune!==communeInitiale)){
+    btn.textContent="Localisation…";
     const c = await localiser(cible.commune);
     if(c){ cible.la=c.la; cible.lo=c.lo; }
   }
@@ -2140,8 +2467,11 @@ $("#del").addEventListener("click", ()=>{
 });
 
 $("#csv").addEventListener("click", ()=>{
-  const cols=["nom","commune","style","gamme","distinction","note","violette","date","prix","format","statut","com"];
-  const cell = (r,c) => c==="violette" ? (r.violette?"oui":"") : (r[c]??"");
+  const cols=["nom","commune","style","gamme","distinction","note","violette","envie","date","prix","format","statut","com"];
+  const cell = (r,c) =>
+      c==="violette" ? (r.violette?"oui":"")
+    : c==="envie"    ? (r.statut==="afaire" ? (ENVIE_LAB[envieDe(r)]||"") : "")
+    : (r[c]??"");
   const ligne = r => cols.map(c=>`"${String(cell(r,c)).replace(/"/g,'""')}"`).join(";");
   const csv=[cols.join(";")].concat(RESTOS.map(ligne)).join("\r\n");
   const a=document.createElement("a");
@@ -2180,18 +2510,31 @@ function render(){
   renderSync();
   updateCounts();
   if(tab==="stats") renderStats();
-  else if(tab==="carte") renderMap();
+  /* on ne recadre qu'à la première ouverture : sinon revenir sur la carte
+     annulait le déplacement que vous veniez de faire. */
+  else if(tab==="carte"){ renderMap(!carteCadree); carteCadree=true; }
   else if(tab==="reglages") renderReglages();
   else renderList();
 }
 initFiltres();
 chips("#m-filtre", [{v:"tout",l:"Toutes"},{v:"faite",l:"Faites"},{v:"afaire",l:"À faire"}], {value:"tout"});
+chips("#b-rayon", RAYONS, {value:"30"});
+chips("#b-gamme", [{v:"",l:"Toutes"}].concat(GAMMES.filter(g=>g!=="—").map(g=>({v:g,l:g}))), {value:""});
+chips("#b-envie", [{v:"",l:"Toutes"},{v:"2",l:"Volontiers et plus"},{v:"3",l:"Au plus vite"}], {value:""});
 onChips("#f-style", ()=>{ majBadge(); renderList(); });
 onChips("#f-dist",  ()=>{ majBadge(); renderList(); });
 onChips("#f-vio",   ()=>{ majBadge(); renderList(); });
 onChips("#m-filtre", ()=>renderMap(true));
-["#fr-style","#fr-distinction","#fr-gamme","#f-statut","#fr-violette"].forEach(h=>onChips(h, ()=>{}));
-majBadge();
+/* les critères du sélecteur ne relancent le calcul que si une proposition est déjà affichée */
+const relancer = () => { if($("#b-props").innerHTML.trim()) proposer(); };
+["#b-rayon","#b-gamme","#b-envie"].forEach(h=>onChips(h, relancer));
+onChips("#f-statut", majChampEnvie);
+onChips("#fr-gamme", ()=>{ gammeManuelle=true; majAssistGamme(); });
+["#fr-style","#fr-distinction","#fr-violette","#fr-envie"].forEach(h=>onChips(h, ()=>{}));
+$("#tri").addEventListener("change", ()=>{
+  const [k,d] = $("#tri").value.split(":");
+  sortKey=k; sortDir=+d; renderList();
+});
 if(window.matchMedia && window.matchMedia("(max-width:700px)").matches){
   $("#filters").hidden = true;
   $("#togfiltres").setAttribute("aria-expanded","false");
